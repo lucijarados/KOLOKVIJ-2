@@ -1,0 +1,361 @@
+#Primjer 1.
+>>>>>>Napišimo svoj prvi kod u Pythonu. Ispisat ćemo Hello World.
+print("Hello World")
+
+#Primjer 2.
+>>>>>>Definirajte varijablu imena broj i u nju spremite vrijednost 5 te
+ispišite sadržaj varijable broj. Zatim definirajte varijablu brojevi i
+pridružite joj vrijednosti 1, 2 i 3 koristeći strukturu podataka lista. Ispišite
+sadržaj varijable brojevi.
+
+broj = 5
+print(broj)
+
+brojevi = [1,2,3] # uglate zagrade označavaju strukturu podataka lista
+print(brojevi)
+
+#Zadatak 1.
+>>>>>>Definirajte varijablu imena var_1 i pridružite joj vrijednosti 10,
+12, 14, 18. Ispišite sadržaj varijable var_1. Napomena: koristite strukturu
+podataka lista.
+
+var_1=[10,12,14,18]
+print(var_1)
+
+len(var_1) # duljina liste
+
+var_1.pop(0) # izbacujem prvi element, prvi element u pythonu je 0
+var_1.pop() # izbacujem zadnji element
+print(var_1)
+
+#Primjer 3.
+>>>>>>Definirajte tri varijable i pridružite im proizvoljne vrijednosti.
+Jednim pozivom funkcije print() ispišite sve tri varijable.
+
+a = [1,2,3]
+b = [4,5,6]
+c = [7,8,9]
+print(a,b,c)
+
+
+#Primjer 4.
+>>>>>>Ispišite vrijednosti iz Primjera 3 tako da svaku varijablu ispišete u
+zaseban redak.
+
+print(a,b,c,sep="\n")
+
+#Primjer 5.
+>>>>>>Izračunajte 5*3+2-7**2+37.
+
+5*3+2-7**2+37
+
+
+#Primjer 6.
+>>>>>>Aritmetički operator modulo % može se koristiti kada
+želimo provjeriti je li neki broj paran ili nije. Izračunajte koliko je
+5*2**3-18+9-3 te pokažite pomoću operatora modulo % je li rezultat
+paran ili neparan.
+
+rezultat = 5*2**3-18+9-3
+print(rezultat)
+print(rezultat%2)
+
+#ako je zadnji rezultat=0, onda je broj paran, a ako je 1, onda je neparan
+
+#Primjer 7.
+>>>>>>Definirajte dvije varijable. Prvoj pridružite vrijednost 2, a
+drugoj vrijednost 8. Pomoću funkcije print() i operatora
+usporedbe usporedite te dvije vrijednosti i ispišite rezultat.
+
+e = 2
+f = 8
+print("e==f", e==f)
+print("e!=f", e!=f)
+print("e>f", e>f)
+print("e<f", e<f)
+print("e>=f", e>=f)
+print("e<=f", e<=f)
+
+#Zadatak 2. 
+>>>>>>Definirajte dvije varijable. Prvoj pridružite vrijednost 32, a
+drugoj vrijednost 4. Pomoću funkcije print() i operatora
+usporedbe usporedite te dvije vrijednosti i ispišite rezultat.
+
+prva=32
+druga=4
+print("prva==druga", prva==druga)
+print("prva!=druga", prva!=druga)
+print("prva>druga", prva>druga)
+print("prva<druga",prva<druga)
+print("prva>=druga",prva>=druga)
+print("prva<=druga",prva<=druga)
+
+#Zadatak 3.
+>>>>>>Definirajte tri varijable: x=112, y=73, z=85. Izračunajte
+aritmetičku sredinu danih brojeva. Rezultat spremite u novu varijablu
+imena rezultat. Zatim, pomoću operatora usporedbe provjerite je
+li rezultat veći od 87. Ispišite rezultat usporedbe (ispis će biti
+vrijednost True ili False).
+
+x=112
+y=73
+z=85
+prosjek=(x+y+z)/3
+print(prosjek)
+print(prosjek>87)
+
+#Primjer 8.
+>>>>>>Želimo provjeriti nalazi li se vrijednost varijable a unutar
+intervala 5,10 . Pretpostavimo 3 različite varijante varijable a, pri
+čemu prva poprima vrijednost 11, druga 2, treća 7. Ispišite rezultat.
+
+>>># 1. verzija:
+a = 11
+print(a)
+
+x = a>5
+y = a<10
+
+print(x)
+print(y)
+
+print(x and y)
+
+>>># 2. verzija:
+a = 2
+
+x = a>5
+y = a<10
+
+print(x)
+print(y)
+
+print(x and y)
+
+>>># 3. verzija:
+a = 7
+
+x = a>5
+y = a<10
+
+print(x)
+print(y)
+
+print(x and y)
+
+#Primjer 9.
+>>>>>>Želimo provjeriti nalazi li se vrijednost varijable c izvan
+intervala 5,10 . Pretpostavimo 3 različite varijante varijable c, pri
+čemu prva poprima vrijednost 11, druga 2, treća 7. Ispišite rezultat.
+
+>>># 1. verzija:
+c = 2
+print(c)
+
+x = c<5
+y = c>10
+
+print(x)
+print(y)
+
+print(x or y)
+
+>>># 2. verzija:
+c = 11
+print(c)
+
+x = c<5
+y = c>10
+
+print(x)
+print(y)
+
+print(x or y)
+
+>>># 3. verzija:
+c = 7
+print(c)
+
+x = c<5
+y = c>10
+
+print(x)
+print(y)
+
+print(x or y)
+
+#Primjer 10.
+>>>>>>Pretpostavimo da je vrijednost jedne varijable True, a
+druge False. Primijenite operator not na obje varijable i ispišite
+rezultat.
+
+r = True
+e = False
+
+print(not r)
+print(not e)
+
+#Zadatak 4.
+>>>>>>Iz Zadatka 3, ispis provjere je li rezultat veći od 87
+(spremljen u varijablu imena rezultat) invertirajte pomoću
+odgovarajućeg logičkog operatora.
+
+provjera=prosjek>87
+print(provjera)
+print(not provjera)
+
+>>>#zadatak iz google forms
+
+x=2**3*3+6*2-2
+y=7+5**2-20
+print(x)
+print(y)
+print("x==y", x==y)
+print("x!=y", x!=y)
+print("x>y",x>y)
+print("x<y",x<y)
+print("x>=y",x>=y)
+print("x<=y",x<=y)
+
+a1 = x>10
+a2 = x<20
+print("x>10",a1)
+print("x<20",a2)
+print("x se nalazi u intervalu",a1 and a2)
+
+b1=y>10
+b2=y<20
+print("y>10",b1)
+print("y<20",b2)
+print("y se nalazi u intervalu",b1 and b2)
+
+#Zadatak 5.
+>>>>>>U varijablu imena abc spremite vrijednost 13. Ispišite tip
+varijable abc.
+
+abc=13
+type(abc)
+
+#Primjer 11.
+>>>>>>Definirajmo varijablu x i pridružimo joj proizvoljnu vrijednost.
+Pomoću naredbe if ispitajte je li varijabla x jednaka 10 (pomoću
+operatora usporedbe jednakosti). Ako je, ispišite riječ Točno.
+
+x = 10
+
+if x == 10:
+    print("Točno")
+
+#Primjer 12.
+>>>>>>Definirajmo varijablu y i pridružimo joj vrijednost 10. Pomoću
+naredbe if-else ispitajte je li varijabla y veća od 11 (pomoću operatora
+strogo veće od). Ako je, ispišite riječ Točno, ako nije, ispišite riječ
+Netočno.
+
+y = 10
+
+if y > 11:
+    print("Točno")
+else:
+    print("Netočno")
+
+#Zadatak 6.
+>>>>>>Definirajte varijablu z te joj pridružite vrijednost 5. Testirajte je li
+vrijednost varijable z parna ili neparna. Ako je parna ispišite frazu
+„Vrijednost je parna”, ako nije ispišite „Vrijednost nije
+parna”. Koristite naredbu if-else.
+
+z=5
+
+if z % 2 == 0:
+    print("Vrijednost je parna")
+else:
+    print("Vrijednost nije parna")
+
+#Primjer 13.
+>>>>>>Pridružimo varijabli result rezultat izračuna 5*6+7**3+15-
+238. Pomoću naredbe if-elif-else ispitat ćemo je li rezultat izračuna
+negativan broj, nula, veći od 0 i manji od 200 te veći od 200.
+
+result = 5*6+7**3+15-238
+print(result)
+
+if result < 0:
+    print("Rezultat je negativan broj")
+elif result == 0:
+    print("Rezultat je 0")
+elif result > 0 and result < 200:
+    print("Rezultat je broj veći od 0, a manji od 200")
+else:
+    print("Rezultat je veći od 200")
+
+#Primjer 14.
+>>>>>>Pomoću for petlje ćemo iterirati, odnosno dohvaćati
+element po element varijable u koju je spremljen niz znakova.
+Definirat ćemo varijablu imena znakovi te ćemo u nju spremiti
+„Ovo je jedna recenica.” U svakom koraku u upravljačku
+varijablu imena e petlja for stavlja po jedan znak iz varijable imena
+znakovi.
+
+znakovi = "Ovo je jedna recenica."
+
+for e in znakovi:
+    print(e)
+
+#Primjer 15.
+>>>>>>Pomoću for petlje ćemo iterirati, odnosno dohvaćati
+element po element liste i ispisati ga. Definirat ćemo listu imena
+var_brojevi koja obuhvaća vrijednosti u intervalu od 0 do 16.
+
+var_brojevi = range(0,17)
+
+for i in var_brojevi:
+    print(i)
+
+#Primjer 16.
+>>>>>>Iz liste var_brojevi (Primjer 15) pomoću for petlje i
+naredbe if ispišite sve brojeve koji su parni.
+
+for i in var_brojevi:
+    if i % 2 == 0:
+        print(i)
+
+#Zadatak 7.
+>>>>>>Formirajte listu proizvoljnog imena koja sadrži vrijednosti u
+rasponu od 0 do 100. Pomoću for petlje i naredbe if ispišite
+vrijednosti koje su veće od 10, a manje od 33.
+
+brojevi=range(0,101)
+
+for i in brojevi:
+    if i > 10 and i < 33:
+        print(i)
+
+
+#Primjer 17.
+>>>>>>Napisat ćemo jednostavnu funkciju koja će ispisati
+proizvoljan niz znakova.
+
+def funkcija():
+	print("Ovo je ispis funkcije")
+
+funkcija()
+
+#Primjer 18.
+>>>>>>Definirajte funkciju koja vraća varijablu s jednim
+vremenskim pomakom (lag). Koristit ćemo podatke o BDP-u Republike
+Hrvatske.
+
+def lag(bdp):
+    bdp.pop() #izbacujemo zadnju vrijednost iz niza da ostane iste dužine kad dodamo nultu vrijednost 
+    bdp.insert(0, None)
+    return bdp
+    
+bdp_cro = [12737.7, 10891.8, 11489.5, 12431.5, 13236.6, 13208.1, 13531.1, 13892.7, 14258.5, 14386.5, 14311.5, 14357.9, 14480.2, 14714.9]
+bdp_jucer = lag(bdp_cro)
+print(bdp_jucer)
+
+#Zadatak 8.
+>>>>>>Definirajte funkciju koja računa stopu rasta BDP-a (podaci iz primjera 18). Napomena: stopa rasta računa se kao (𝑏𝑑𝑝_𝑑𝑎𝑛𝑎𝑠 – 𝑏𝑑𝑝_𝑗𝑢𝑐𝑒𝑟)/𝑏𝑝𝑑_𝑗𝑢𝑐𝑒𝑟 ∗ 100
+
+
