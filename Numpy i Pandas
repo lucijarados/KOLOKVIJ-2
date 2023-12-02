@@ -1,0 +1,20 @@
+#Primjer 1.
+>>>>>> Ispiši prvi i zadnji element liste 
+, dodaj novi element te ukloni drugi
+
+x=[11, 13, 17, 19]
+
+#Pristupanje prvom elementu: 
+print(x[0])
+
+#Pristupanje zadnjem elementu: 
+print(x[-1])
+
+#Dodavanje elementa u listu: 
+x = x + [23]
+print(x)
+
+#Brisanje drugog elementa: 
+del(x[1])
+print(x)
+
