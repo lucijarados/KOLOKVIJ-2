@@ -18,3 +18,319 @@ print(x)
 del(x[1])
 print(x)
 
+#Primjer 2.
+>>>>>>Pokreni sljedeći kod. Objasni što se dogodilo.
+
+x = [11, 13, 17, 19]
+y = x
+print(x)
+print(y)
+
+x[0] = 7
+print(x)
+print(y)
+
+Oprez: Izraz 
+ ne stvara novu lokaciju u memoriji u kojoj je zapisan 
+y, već x i y su dva naziva za istu lokaciju. Zato promjena na 
+x mijenja y. Odvojene lokacije stvaramo sa sljedećom naredbom:
+
+x = [11, 13, 17, 19]
+y = list(x)
+print(x)
+print(y)
+
+x[0] = 7
+print(x)
+print(y)
+
+#Primjer 3.
+>>>>>>Učitaj numpy paket (koristi np alias) i kreiraj niz koji se sastoji od elemenata 
+[11,13,17,19].
+
+import numpy as np
+
+x = np.array([11, 13, 17, 19])
+print(x)
+x = np.array([11, 13, 17, 19],dtype=int)
+print(x)
+x = np.array([11, 13, 17, 19],dtype=float)
+print(x)
+
+#Primjer 4.
+>>>>>> Kreiraj niz koji se sastoji od pet nula. Kreiraj niz koji se sastoji od sedam jedinica. Kreiraj niz koji se sastoji od dvije šestice.
+
+import numpy as np
+#bitno je naglasiti ovaj np prije zeros jer ta funkcija može postojati unutar drugih paketa pa je potrebno precizirati iz kojeg ćemo uzimati
+x=np.zeros(5)
+print(x)
+
+x=np.ones(7)
+print(x)
+
+x=np.full(2,6)
+print(x)
+
+#Kreiraj niz duljine 5 koji počinje s 0 i završava s 1. Kreiraj niz s korakom 2 koji započinje s 0 a završava s 10.
+
+#u R: seq(from=0, to=1, length.out =5)
+x=np.linspace(0,1,5)
+print(x)
+
+##u R: seq(from=0, to=10, by=2)
+x=np.arange(0,11,2)
+print(x)
+
+#Kreiraj tri niza duljine 7 koji se sastoje od slučajnih brojeva. Slučajne brojeve generiraj pomoću uniformne([0,1]), normalne distribucije N(0,1)
+i jednolike distribucije s modalitetima 0,1,...,9.
+
+#np.random.seed(0)
+
+x=np.random.random(7) #uniformna distribucija(random), 
+print(x)
+
+x=np.random.normal(0,1,7) #počinje s 0=očekivana vrijednost, 1 je st.devijacija, a 7 je broj elemenata
+print(x)
+
+x=np.random.randint(0,10,7) #od 0 do 10 bez 10 želimo 7 elemenata
+print(x)
+
+#Primjer 5.
+>>>>>>Kreiraj matricu s dva retka koja se saastoji od nizova [11,13,17,19] i [10,12,16,18].
+
+x=np.array([[11, 13, 17, 19], [10, 12, 16, 18]])
+print(x)
+
+#Kreiraj matricu nula 5x1 i matricu jedinica 1x7.
+
+x=np.zeros((5,1)) #5 redaka, 1 stupac
+print(x)
+
+x=np.ones((1,7))
+print(x)
+
+#Kreiraj dvije matrice dimenzija 7x3 koje se sastoje od slučajnih brojeva. Slučajne brojeve generiraj pomoću normalne i uniformne distribucije.
+
+x=np.random.random((7,3))
+print(x)
+
+x=np.random.normal(0,1,(7,3))
+print(x)
+
+#Primjer 6A
+>>>>>>Kreiraj matricu 3x5 i odredi njene atribute.
+
+import numpy as np
+
+x=np.arange(0,15)
+print(x)
+
+x=np.arange(0,15).reshape((3,5))
+print(x)
+
+#######################################
+
+#x=np.random.random((3,5))
+
+x=np.arange(0,15).reshape((3,5))
+
+#Broj dimenzija matrice: 
+print(x.ndim)
+#Dimenzije matrice: 
+print(x.shape)				
+#Broj elemenata matrice: 
+print(x.size)
+
+#Primjer 6B
+>>>>>>Pokreni sljedeći kod. Objasni što se događa.
+
+import numpy as np
+
+x=np.arange(0,15).reshape((3,5))
+y=x[0:2,0:2]
+print("Zadani podaci")
+print(x)
+print(y)
+
+print("1. pokušaj")
+y[0,0]=99
+print(x)
+print(y)
+
+print("2. pokušaj")
+x=np.arange(0,15).reshape((3,5))
+y=x[0:2,0:2].copy()
+y[0,0]=99
+print(x)
+print(y)
+
+#Prvi element matrice: x[0,0]
+• Zadnji element iz 1.retka matrice: x[0,-1]
+• Prva dva retka matrice u prvom stupcu: x[0:2,0]
+• Prva dva retka matrice: x[0:2,:]
+• Parni stupci matrice: x[:,1:6:2]
+
+#Primjer 6C
+>>>>>>Elementima možemo pristupiti na razne načine. Prouči sljedeći ispis i komentiraj.
+
+import numpy as np
+
+x=np.arange(0,15).reshape((3,5))
+print(x)
+#indexing (e.g., arr[2, 1]) #3.redak, 2.stupac
+print("Indexing \n",x[2,1])
+
+#slicing (e.g., arr[:, 1:3]) 
+print("Slicing 1 \n",x[2,1:3]) #3.redak, 2. i 3. stupac
+print("Slicing 2 \n",x[:,1:3]) #2. i 3. stupac 
+print("Slicing 3 \n",x[:,0:5:2]) #neparni stupci matrice 
+
+#masking (e.g., arr[arr > 2]) 
+print("Masking \n",x[:,x[0,:]>2])
+
+#fancy indexing (e.g., arr[0, [1, 4]]) 
+print("Fancy index \n",x[0, [1, 4]])      
+      
+#combinations thereof (e.g., arr[:, [1, 5]])
+print("Combination \n",x[:, [1, 4]]) 
+
+#Primjer 6D
+>>>>>> Zbroji elemente matrice po stupcima i po redcima.
+
+#Stupcima
+print(x)
+print("Zbroj po stupcima \n",np.sum(x,axis=0))
+
+#Redcima
+print("Zbroj po redcima \n",np.sum(x,axis=1))
+
+#Primjer 7.
+>>>>>>Napiši naredbe kojima se nizu [11,13,17,19] dodaje broj 2.
+import numpy as np
+
+x=np.array([11, 13, 17, 19])
+y=np.zeros(4)
+
+for i in range(4):
+    y[i]=x[i]+2
+
+print(x)
+print(y)
+
+#Pokreni sljedeći kod i komentiraj rezultate.
+
+x=np.array([11, 13, 17, 19])
+
+print("x+2",np.add(x,2))
+print("x+2",x+2)
+
+x=np.array([11, 13, 17, 19])
+
+print("x-2",np.subtract(x,2))
+print("x*2",np.multiply(x,2))
+print("x/2",np.divide(x,2))
+print("x//2",np.floor_divide(x,2))
+print("x**2",np.power(x,2))
+print("x%2",np.mod(x,2))
+
+
+print("x-2",x-2)
+print("x*2",x*2)
+print("x/2",x/2)
+print("x//2",x//2)
+print("x**2",x**2)
+print("x%2",x%2)
+
+#Primjer 8.
+>>>>>>Pokreni sljedeće naredbe i objasni što se računa.
+
+import numpy as np
+
+x=np.array([11, -13, 17, -19])
+
+print(np.abs(x)) #apsolutna vrijednost
+print(np.sin(x))  #sinus
+print(np.exp(x))  #eksponencijalna vrijednost 
+
+x=np.array([11, -13, 17, -19],dtype=float)
+#on ne računa negativnu eksponenciju pa je bitno da definiramo vrstu kao float, tj. realni broj
+print(np.power(3,x))
+
+x=np.abs(x)
+print(np.log(x))
+print(np.log10(x))
+#opet će nam izbaciti grešku jer ne zna izračunati logaritam od negativnog broja pa moramo dodati apsolutnu vrijednost 
+
+#Pokreni sljedeće naredbe i objasni rezultat.
+
+import numpy as np
+
+x=np.array([11, -13, 17, -19])
+
+np.multiply(x,2,out=y) #u y spremi output ove naredbe 
+
+print(y)
+
+#Alternativno:
+y=(x*2).copy()
+
+print(y)
+
+#Primjer 9A
+>>>>>>Kreiraj DataFrame koji se sastoji od slučajnih brojeva. Komentiraj sljedeće elemente DataFrame:
+
+
+import pandas as pd
+
+dat = pd.DataFrame(np.random.rand(3,2),
+	columns=["A", "B"], index=["i1", "i2", "i3"])
+
+# Element DataFrame  - index
+print(dat.index)
+
+# Element DataFrame  - columns
+print(dat.columns)
+
+
+# Vrijednosti DataFrame  - values
+print(dat.values)
+
+#Primjer 9B
+>>>>>>Kreiraj DataFrame koji se sastoji od slučajnih brojeva. Ispiši prvi stupac i redak.
+
+import numpy as np
+import pandas as pd
+
+dat = pd.DataFrame(np.random.rand(3,2),
+	columns=["A", "B"], index=["i1", "i2", "i3"])
+print(dat,"\n")
+
+
+print("Bez duplih uglatih zagrada \n",dat["A"],"\n")
+print("S duplim uglatim zagradama \n",dat[["A"]])
+
+#print("S duplim uglatim zagradama \n",dat[["i1"]]) #da probamo ovaj kod izbacio bi nam error jer ne može tako za retke
+
+#Na gornji način možemo pristupiti samo stupcima (varijablama), ne i redcima. Koriste se funkcije loc, iloc i ix.
+
+#loc
+
+print("Korištenje loc funkcije \n",dat.loc[:,"A"],"\n")
+
+print("Korištenje loc funkcije - 1.stupac \n",dat.loc[:,["A"]],"\n")
+
+print("Korištenje loc funkcije - 1.redak \n",dat.loc[["i1"],:],"\n")
+
+#iloc
+
+print("Korištenje iloc funkcije - 1.stupac \n",dat.iloc[:,0],"\n")
+
+print("Korištenje iloc funkcije - 1.redak \n",dat.iloc[0,:],"\n")
+
+print("Korištenje iloc funkcije - 1.stupac - pandas dataframe \n",dat.iloc[:,[0]],"\n")
+
+print("Korištenje iloc funkcije - 1.redak - pandas dataframe \n",dat.iloc[[0],:],"\n")
+
+#razlika između loc i iloc funkcije je što loc koristi ime retka, a iloc koristi broj pozicije
+
+
