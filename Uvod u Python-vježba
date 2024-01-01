@@ -1,0 +1,88 @@
+#Zad. 22.
+#Definirajte varijablu imena varijabla_1 te joj pridružite vrijednosti 8, 15 i 7. Ispišite vrijednosti varijable.
+
+varijabla_1=[8,15,7]
+print(varijabla_1)
+
+
+#Zad. 23.
+#Definirajte dvije varijable te im pridružite cjelobrojnu vrijednost prema izboru. 
+Ispišite rezultat operatora usporedbe (usporedba jednakosti, nejednakosti, strogo veće, strogo manje, veće ili jednako, manje ili jednako).
+
+a=22
+b=13
+
+print("a==b",a==b)
+print("a!=b",a!=b)
+print("a<b",a<b)
+print("a>b",a>b)
+print("a<=b",a<=b)
+print("a>=b",a>=b)
+
+#Zad. 24.
+#Kreirajte dvije varijable čije su vrijednosti True ili False. Testirajte logičke operatore (and, or, not) pomoću definiranih varijabli.
+
+a=True
+b=False
+
+x=a and b
+y=a or b
+z= not a
+w= not b
+print(x,y,z,w)
+
+#Zad. 25.
+#Definirajte tri varijable. U prvu spremite vrijednost 8, u drugu 8.8, a u treću True. Provjerite kojem tipu pripadaju te tri varijable i ispišite rezultat.
+
+var_1=8
+type(var_1)
+#integer
+
+var_2=8.8
+type(var_2)
+#float
+
+var_3=True
+type(var_3)
+#bool
+
+#Zad. 26.
+#Izračunajmo 5*7+13**2-56+32*11 te rezultat spremimo u varijablu imena izracun. Pomoću naredbe if ispitajte je li varijabla izracun veći ili jednak 500 (pomoću operatora veće ili jednako). Ako je, ispišite riječ Točno.
+
+izracun= 5*7+13**2-56+32*11
+if izracun>=500:
+    print("Točno")
+
+#Zad. 27.
+#Koristeći petlju for ispišite sve neparne brojeve između 1 i 100 koji su istovremeno djeljivi s 3.
+
+niz_brojeva=range(1,101)
+
+for i in niz_brojeva:
+    if i % 2 == 1 and i % 3 == 0:
+        print(i)
+
+#Zad. 28.
+#Definirajte funkciju koja računa stopu rasta BDP-a (podaci iz primjera 18). Napomena: stopa rasta računa se kao (bdp_danas – bdp_jucer)/bpd_jucer * 100
+
+bdp_cro = [12737.7,	10891.8,	11489.5,	12431.5,	13236.6,	13208.1,	13531.1,	13892.7,	14258.5,	14386.5,	14311.5,	14357.9,	14480.2,	14714.9]
+
+def stopa_rasta(bdp):
+    # moramo kreirati praznu listu u koju cemo spremiti stope rasta
+    stopeRasta = []
+    # pomocu for petlje šetamo po listi, od 1. do zadnjeg indeksa, funkcija len() vraca duljinu liste
+    for i in range(1, len(bdp)):
+        # izracunavamo rezultat razlike trenutni element koji obrađujemo minus prethodni
+        razlika = bdp[i] - bdp[i-1]
+        # izracunavamo stopu rasta tako da razliku podijelimo s lijevim elementom i pomnozimo ju sa sto
+        stopaRasta = razlika / bdp[i-1] * 100
+        # izracunatu stopu rasta pomocu metode append dodajemo u novo kreiranu listu koju cemo u konacnici vratiti kao povratnu vrijednost same funkcije
+        stopeRasta.append(stopaRasta)
+        # i uvecavamo za 1 jer zelimo šetati po elementima liste
+        i+=1
+
+    # vracanje liste u kojoj se nalaze stope rasta
+    return stopeRasta
+
+stopa_rasta_bdp_cro = stopa_rasta(bdp_cro)
+print(stopa_rasta_bdp_cro)
