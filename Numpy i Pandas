@@ -18,6 +18,9 @@ print(x)
 del(x[1])
 print(x)
 
+#Kreiraj listu prvih 10 prirodnih brojeva:
+range(0,10)
+
 #Primjer 2.
 >>>>>>Pokreni sljedeći kod. Objasni što se dogodilo.
 
@@ -89,10 +92,10 @@ i jednolike distribucije s modalitetima 0,1,...,9.
 x=np.random.random(7) #uniformna distribucija(random), 
 print(x)
 
-x=np.random.normal(0,1,7) #počinje s 0=očekivana vrijednost, 1 je st.devijacija, a 7 je broj elemenata
+x=np.random.normal(0,1,7) #počinje s 0=očekivana vrijednost, 1 je st.devijacija, a 7 je broj elemenata, normalna distribucija
 print(x)
 
-x=np.random.randint(0,10,7) #od 0 do 10 bez 10 želimo 7 elemenata
+x=np.random.randint(0,10,7) #od 0 do 10 bez 10 želimo 7 elemenata, jednolika distribucija
 print(x)
 
 #Primjer 5.
@@ -204,6 +207,11 @@ print("Zbroj po stupcima \n",np.sum(x,axis=0))
 #Redcima
 print("Zbroj po redcima \n",np.sum(x,axis=1))
 
+#Kad kopiramo objekte i želimo da svaki postoji na svojoj lokaciji
+koristimo funkciju copy
+x=np.random.random((3,2))
+y=x.copy()
+
 #Primjer 7.
 >>>>>>Napiši naredbe kojima se nizu [11,13,17,19] dodaje broj 2.
 import numpy as np
@@ -276,6 +284,7 @@ y=(x*2).copy()
 
 print(y)
 
+
 #Primjer 9A
 >>>>>>Kreiraj DataFrame koji se sastoji od slučajnih brojeva. Komentiraj sljedeće elemente DataFrame:
 
@@ -313,7 +322,7 @@ print("S duplim uglatim zagradama \n",dat[["A"]])
 
 #Na gornji način možemo pristupiti samo stupcima (varijablama), ne i redcima. Koriste se funkcije loc, iloc i ix.
 
-#loc
+#loc - koristi baš ime retka ili stupca
 
 print("Korištenje loc funkcije \n",dat.loc[:,"A"],"\n")
 
@@ -321,7 +330,7 @@ print("Korištenje loc funkcije - 1.stupac \n",dat.loc[:,["A"]],"\n")
 
 print("Korištenje loc funkcije - 1.redak \n",dat.loc[["i1"],:],"\n")
 
-#iloc
+#iloc koristi numeraciju, tj. poziciju u dataframeu
 
 print("Korištenje iloc funkcije - 1.stupac \n",dat.iloc[:,0],"\n")
 
