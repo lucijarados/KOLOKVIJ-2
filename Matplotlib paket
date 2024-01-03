@@ -1,0 +1,535 @@
+>>>#Primjer 1A 
+#Kreiraj dvije matrice x i y te ispiši red veličine prve matrice. Objasni od čega se sastoji svaka matrica.
+
+import numpy as np
+x=np.zeros((2,7))
+y=np.random.randint(0,15,(5,5)) #generira slučajne prirodne brojeve od 0 do 14
+
+print(x)
+print(y)
+print(x.shape)
+
+>>>#Primjer 1B
+# Kreiraj matricu 15 x 3 pomoću generatora slučajnih brojeva (za jediničnu normalnu distribuciju). Izračunaj prosjek i standardnu devijaciju za cijelu matricu i po stupcima.
+
+x=np.random.normal(0,1,(15,3))
+
+print("Cijela matrica - Prosjek",np.mean(x))
+print("Standardna devijacija: ",np.std(x))
+print("\n")
+
+#rezultat je dobar je nam prosjek treba biti blizu 0, a sd blizu 1
+
+print("Po stupcima - Prosjek",np.mean(x,axis=0))
+print("Standardna devijacija: ",np.std(x,axis=0))
+
+#trebamo dobiti 3 ispisa jer imamo 3 stupca u matrici
+#za male uzorke je veće odstupanje
+
+>>>#Primjer 1C
+#Kreiraj matricu 15x3 pomoću generatora slučajnih brojeva (uniformna distribucija na 0,1).
+Napravi podmatricu y koja se sastoji od prva dva stupca matrice x te kvadriraj vrijednosti matrice y i spremi u matricu z.
+Ispiši prva element matrice x,y,z. Promijeni prvi element u x te ponovno ispiši prvi element matrica x,y i z.
+Promijeni prvi element u y te ponovno ispiši prvi element matrica x,y i z.
+
+#randint - generira iz intervala (a,b>
+#normal - normalna distribucija prosjek i stdev
+#random - uniformna distribucija [0,1]
+
+x=np.random.random((15,3))
+#print(x)
+
+y=x[:,0:2].copy() #dvotočka ynači da želimo sve retke, a 0:2 znači da hoćemo prvi i drugi stupac jer on isključi ovu gornju granicu 
+#drugi način je y=x[:, [0,1]]
+#da nema ovog copy ne bi se stvorila nova varijabla y 
+
+z=y**2
+##np.power(y,2,out=z)
+
+print(x[0,0],y[0,0],z[0,0])
+x[0,0]=100
+print(x[0,0],y[0,0],z[0,0])
+y[0,0]=-100
+print(x[0,0],y[0,0],z[0,0])
+
+>>>#Primjer 1D
+#Kreiraj matricu 25x5 pomoću generatora slučajnih brojeva (jedinična normalna distribucija). Izračunaj maksimalni element za stupce koji u prvom retku imaju pozitivan broj.
+
+np.random.seed(1)
+
+x=np.random.normal(0,1,(25,5))
+print(x[0,:])
+
+ind=x[0,:]>0
+
+print(ind)
+
+print("Maksimum po stupcima \n",np.max(x[:,ind],axis=0))
+
+#provjera
+print("Maksimum po stupcima \n",np.max(x[:,[0,4]],axis=0))
+
+>>>#Zadatak 1
+#Kreiraj matricu 5x22 koja se sastoji od slučajnih brojeva, uniformna distribucija. Izračunaj prosjek po retcima.
+
+x=np.random.random((5,22))
+print("Po retcima - Prosjek",np.mean(x,axis=1)) #axis=1 za retke
+
+#rezultat je dobar jer je prosjek blizu 0,5 pošto se radi o uniformnoj distribuciji
+
+>>>#Primjer 2
+#Kreiraj DataFrame koji se sastoji od slučajnih brojeva. Komentiraj sljedeće naredbe.
+
+import pandas as pd
+import numpy as np
+#u prvi redak nazive varijabli
+#u prvi stupac nazive 
+#index.col=0
+
+dat = pd.DataFrame(np.random.rand(3,2),	columns=["A", "B"], index=["i1", "i2", "i3"]) #slučajni brojevi, dimenzija 3x2
+
+print("Korištenje loc funkcije - 1.stupac \n",dat.loc[:,"A"],"\n") #očekuje i i V
+#ako hoćemo na iloc način, onda [:,0]
+
+print("Korištenje iloc funkcije - 1.redak \n",dat.iloc[0,:],"\n") #očekuje broj,broj
+#ako hoćemo na loc način, onda ["i1",:]
+
+print(dat)
+
+#Pandas index-ing pretpostavlja da dohvaćamo stupce
+print(dat["A"])
+#print(dat["A":"B"])
+
+#Pandas slice-ing pretpostavlja da dohvaćamo retke
+print(dat[1:3])
+#print(dat[1])
+
+#Moguće je i ovo:
+print(dat.A)
+
+#Savjetujem izbjegavati dat."naziv_stupca"- u slučaju da se stupac zove isto kao neka funkcija, prednost se daje funkciji
+
+dat = pd.DataFrame(np.random.rand(3,2),	columns=["T", "B"], index=["i1", "i2", "i3"])
+print(dat.T)
+
+>>>#Zadatak 2.
+#Kreiraj pandas dataframe koji se sastoji od slučajnih brojeva i sadrži stipce s nazivima V1, V2, V3 i V4 te redcima i1, i2, i3.
+Ispiši prvi redak. Ispiši drugi stupac. Ispiši prvi i treći stupac. Ispiši zadnja dva retka.
+
+print("Korištenje iloc funkcije - 1.redak \n",dat.iloc[0,:],"\n") #očekuje broj,broj
+
+print("Korištenje iloc funkcije - 2.stupac \n",dat.iloc[:,1],"\n")
+
+print(dat.loc[:,["V1","V3"]])
+
+print(dat.loc[["i2","i3"],:])
+
+>>>#Primjer 3.
+#Kreiraj DataFrame iz csv multiTimeline.csv
+
+import pandas as pd
+import numpy as np
+
+dat = pd.read_csv("multiTimeline.csv")
+print(dat)
+
+#Ako želimo da se prvi stupac u dokumentu koristi kao oznaka retka, dodajemo index_col=0
+dat = pd.read_csv("multiTimeline.csv", index_col=0)
+print(dat)
+
+>>>#Primjer 4.
+#Izračunaj diferencije i stope promjene za navedene nizove iz Primjera 3. Uzmi u obzir da se radi o vremenskim serijama.
+#U prvom dijelu promotrimo samo diferenciju. Obzirom da mjesečni nizovi imaju sezonsku komponentu, računamo samo yt-yt-12
+
+
+#gledamo month by month, znači uspoređujemo npr. veljaču 2023. i veljaču 2022.
+delta = pd.DataFrame(np.nan, index=dat.index, columns=dat.columns)
+#print(delta)
+#nan je funkcija "nepostojeća vrijednost"
+
+[m,n]=dat.shape #m-broj redaka, n-broj stupaca
+
+# 1. stupac
+for i in range(1,m): #krećemo od drugog retka jer nemamo vrijednosti prije 1.razdoblja
+    delta.iloc[i,0]=dat.iloc[i,0]-dat.iloc[(i-1),0] #punimo 1. stupac, trebaju nam diferencije znači vrijednost danas-vrijednost jučer
+
+print(delta.iloc[:,:])
+###########################################
+
+delta = pd.DataFrame(np.nan, index=dat.index, columns=dat.columns)
+
+[m,n]=dat.shape
+
+# svi stupci
+for j in range(0,n):
+    for i in range(1,m):
+        delta.iloc[i,j]=(dat.iloc[i,j]-dat.iloc[(i-1),j])
+
+print(delta.iloc[:,:])
+
+#Do sada smo elementima pristupali pomoću for petlja, no ako im želimo pristupiti bez for petlja, diferencija se svodi na oduzimanje matrica.
+
+#matrici t oduzmemo 1.razdoblje, a druga matrica nam je 1. matrica, samo bez zadnjeg elementa
+delta = pd.DataFrame(np.nan, index=dat.index, columns=dat.columns)
+
+[m,n]=dat.shape
+
+delta.iloc[1:m,:]=dat.iloc[1:m,:].values-dat.iloc[0:(m-1),:].values
+
+print(delta.iloc[:,:])
+
+#broadcasting
+#Kod oduzimanja dva DataFrame Python radi broadcasting (uparuje retke koji imaju isti naziv) zbog čega dozi do neželjenog outputa.
+Želimo da se oduzimaju vrijednosti pa dodajemo dio .values. Prouči ovaj kratki primjer.
+
+
+import pandas as pd
+import numpy as np
+
+# Create pandas DataFrames
+df1 = pd.DataFrame(np.arange(1,7).reshape(3,2), index=[0, 1, 2],columns=["A","B"])
+df2 = pd.DataFrame(np.arange(7,13).reshape(3,2), index=[1, 2, 3],columns=["A","B"])
+print(df1)
+print(df2)
+
+# Without .values
+result_without_values = df1['A'] - df2['A']
+# Result has a new index (0, 1, 2, 3)
+
+# With .values
+result_with_values = df1['A'].values - df2['A'].values
+# Result is a NumPy array with the same shape as the original DataFrames
+
+print(result_without_values)
+# Output:
+# 0    NaN
+# 1   -4.0
+# 2   -4.0
+# 3    NaN
+
+print(result_with_values)
+# Output:
+# [-6 -6 -6]
+
+#bitno je da dodamo values kako bi se oduzimale vrijednosti iz dataframea, a ne da on upari one koje se jednako zovu i onda njih oduzima 
+
+#Nastavljamo s Primjerom 4. Izračunali smo diferencije pomoću for petlji, oduzimanja matrica, te naravno postoji i već gotova funkcija diff().
+
+delta=dat.diff(periods=1,axis=0)
+
+print(delta.iloc[:,:])
+
+#sad računamo stope promjene 
+
+rates = pd.DataFrame(np.nan, index=dat.index, columns=dat.columns)
+#print(rates)
+
+rates=dat.pct_change(periods=1,axis=0)*100
+
+print(rates.iloc[12,:])
+print(rates)
+
+>>>#dijeljenje s nulom
+print(rates.iloc[0:27,2])
+
+#print(np.isnan(rates["lidl"]))
+
+#korigiramo početni niz podataka dat tako da na mjestu gdje je 0, bude 0,01
+
+dat[dat.values ==0 ] =0.01 #iz dataframea izvuci samo elemente jednake 0 i njih promijeni u 0.01
+
+delta=dat.diff(periods=1,axis=0)
+rates=dat.pct_change(periods=1,axis=0)*100
+
+#print(rates.iloc[0:27,2])
+
+>>>#Primjer 5.
+#Definiraj varijablu kojom se uspoređuje popularnost Lidla i popularnost Konzuma. Komentiraj deskriptivnu statistiku.
+
+import pandas as pd
+import numpy as np
+
+#11/06 jer se Lidl pojavio u Hrvatskoj u studenom 2006.
+
+dat = pd.read_csv("multiTimeline.csv", index_col=0)
+
+ratio = dat["lidl"]/dat["konzum"]*100
+
+ratio = dat.loc["2007-01":,"lidl"]/dat.loc["2007-01":,"konzum"]*100
+
+descriptives = ratio.describe()
+
+print(descriptives)
+
+#ako je=100 -> jednako su popularni, >100 -> Lidl je popularniji, <100 -> Konzum je popularniji
+#Lidl pobjeđuje u barem 50% slučajeva interpretacija 50%
+
+#Tko je popularniji? Tko je većinom popularniji? Što možemo reći?
+
+#Ima li smisla ova analiza?
+
+#---Nema smisla jer Lidl nije uključen u sva razdoblja koja smo analizirali.
+
+>>>#Zadatak 3.
+#Stopa promjene se često računa kao razlika logaritmiranih vrijednosti, 
+logyt-logyt-1. Izračunaj stopu promjene za varijablu cijena prema ovoj formuli.
+
+dat[dat.values==0]=0.01
+
+#Sljedeća naredba logaritmira sve vrijednosti u dataframe dat
+y=np.log(dat)
+
+#Stopu promjene računamo na drugačiji način (umjesto razlomka), kao razlika logaritmiranih vrijednosti
+# Stopa promjene se uobičajeno računa kao diferencija logaritama
+rate=y.diff(periods=1,axis=0)
+print(rate)
+
+>>>#Primjer 6.
+# Do sada smo podatke tretirali kao običan DataFrame, no u pythonu možemo precizirati da se radi o vremenskim podacima.
+
+import pandas as pd
+
+# 
+dat = pd.read_csv("multiTimeline.csv", index_col=0, parse_dates=True)
+print(dat)
+#pazite na format datuma
+
+
+import pandas as pd
+
+
+dat = pd.read_csv("multiTimeline.csv",index_col=0,parse_dates=["Month"])
+
+print(dat)
+#pazite na format datuma
+
+>>>#Primjer 7.
+#Brisanje i dodavanje stupaca u data frame.
+
+import pandas as pd
+
+dat = pd.read_csv("multiTimeline.csv",index_col=0,parse_dates=["Month"])
+print(dat)
+# Naredba drop briše stupac "cijena"
+dat = dat.drop('cijena',axis=1)
+
+#Računanjem dat["ratio"] python shvaća da želimo dodati novi stupac i dodaje ga u dataframe
+dat["ratio"]=dat["lidl"]/dat["konzum"]*100
+print(dat)
+
+>>>#Primjer 8.
+#Do sada smo podatke učitavali iz csv dokumenta, no moguće je i iz excelovih dokumenata.
+
+import pandas as pd
+import openpyxl as oxl
+#u cmd: py -m pip install "openpyxl"
+
+GTdata = pd.read_excel('GTdata.xlsx', sheet_name='Sheet1', header=0, index_col=0)
+
+print(GTdata)
+
+>>>#Primjer 9A
+#Pomoću linijskog grafikona u pandasu prikaži GT podatke.
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+dat = pd.read_csv("multiTimeline.csv", index_col=0, parse_dates=True)
+dat.plot()
+
+>>>#Primjer 9B
+#Pomoću linijskog grafikona u matplotlib prikaži GT podatke.
+
+import matplotlib.pyplot as plt
+
+dat = pd.read_csv("multiTimeline.csv", index_col=0, parse_dates=True)
+
+plt.plot(dat)
+plt.show()
+plt.close()
+
+>>>#Primjer 9C
+#Pomoću linijskog grafikona u matplotlib prikaži GT podatke, dodaj oznake na grafikon.
+
+plt.plot(dat, label=dat.columns)
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Google Trends podaci")
+#plt.yticks([0,25,50,75,100])
+#plt.grid(True)
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+#Zadatak 4.
+# Pomoću linijskog grafikona prikaži varijablu popularnost Lidla od 2007. godine.
+
+plt.plot(dat.loc["2007-01":,"lidl"], label=dat.columns[2])
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Google Trends podaci")
+#plt.yticks([0,25,50,75,100])
+#plt.grid(True)
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+#Primjer 10A
+#Nacrtaj grafikon tako da svaki niz iz GT podataka dodaješ pomoću for petlje.
+
+[m,n]=dat.shape
+
+for i in range(n):
+            plt.plot(dat.iloc[:,i],label=dat.columns[i])
+
+plt.legend()
+plt.show()
+plt.close()
+
+>>>#Primjer 10B
+#Prouči dostupne (python) stilove i nacrtaj GT podatke u njemu.
+
+print(plt.style.available)
+
+plt.style.use("grayscale")
+for i in range(n):
+    plt.plot(dat.iloc[:,i],label=dat.columns[i])
+    
+plt.legend(loc='upper left', fontsize='small')
+plt.show()
+plt.close()
+
+plt.style.use("default")
+
+>>>#Primjer 10C
+#Promijeni boju i stil linija.
+
+l=['-', '--', '-.', ':']
+
+for i in range(n):
+    plt.plot(dat.iloc[:,i],label=dat.columns[i],ls=l[i],color="gray")
+    
+plt.legend(loc='upper left', fontsize='small')
+plt.show()
+plt.close()
+
+>>>#Primjer 11.
+#Nacrtaj zadnjih 12 podataka popularnosti konzuma pomoću površinskoj stupića.
+
+konzum12 = dat.iloc[-13:-1,3].copy()
+
+#pandas funkcija plot
+konzum12.plot(kind='bar')
+
+###############################
+import matplotlib.dates as mdates
+
+
+plt.style.use("default")
+
+konzum12 = dat.iloc[-13:-1,3].copy()
+
+plt.bar(konzum12.index,konzum12,width=10)
+
+plt.xticks(konzum12.index, konzum12.index.strftime('%Y-%m'), rotation=45, ha='right')
+
+
+plt.show()
+#plt.close()
+
+>>>#Primjer 12.
+#Nacrtaj zadnjih 12 podataka omjera popularnosti lidl i konzuma pomoću površinskoj stupića.
+
+dat = pd.read_csv("multiTimeline.csv", index_col=0,parse_dates=True)
+
+ratio = (dat["lidl"]/dat["konzum"]*100).iloc[-13:-1]
+
+print(ratio)
+
+plt.style.use("default")
+
+#plt.bar(ratio.index,ratio,width=10)
+plt.bar(ratio.index, ratio-100, color='grey', width=15, bottom=100)
+
+plt.xticks(ratio.index, ratio.index.strftime('%Y-%m'), rotation=45, ha='right')
+plt.axhline(100, color='blue', linewidth=1, label='Reference Line')
+
+
+plt.show()
+#plt.close()
+
+>>>#Primjer 13.
+#Nacrtaj histogram za varijablu cijena.
+
+#pandas
+dat["cijena"].plot(kind="hist")
+
+#matplotlib
+plt.style.use("classic")
+
+plt.hist(dat["cijena"],bins=5,range=[0,100])
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Distribucija popularnosti pojma cijena")
+
+plt.show()
+plt.close()
+
+>>>#Primjer 14.
+#Nacrtajte dijagram rasipanja za varijable cijena i katalog.
+
+#pandas
+dat.iloc[:,0:2].plot(kind="scatter",x='cijena', y='katalog')
+
+#dat.plot(kind="scatter",x='cijena', y='katalog')
+
+#matplotlib
+plt.style.use("classic")
+
+plt.scatter(dat["cijena"],dat["katalog"])
+
+plt.title("Dijagram rasipanja")
+
+plt.show()
+plt.close()
+
+#Zadatak 5. 
+#Pomoću dijagrama rasipanja prikaži varijable cijena i popularnost Lidla. Kakva je veza među varijablama?
+
+#matplotlib
+plt.style.use("classic")
+
+plt.scatter(dat["cijena"],dat["lidl"])
+
+plt.title("Dijagram rasipanja")
+
+plt.show()
+plt.close()
+
+Veza među varijablama je pozitivna i jaka. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
