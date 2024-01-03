@@ -55,7 +55,7 @@ plt.scatter(X, Y)
 plt.plot(X, Y_pred, color='red')
 plt.show()
 
-#Primjer 3: Ispiši procijenjene parametre te koeficijent determinacije.
+>>>#Primjer 3: Ispiši procijenjene parametre te koeficijent determinacije.
 
 #koeficijent determinacije-modelom je objašnjeno % odstupanja
 #varijanca regresije, tj. stdev -prosječno odstupanje stvarnih od procijenjenih vrijednosti(RMSE)
@@ -77,7 +77,7 @@ print('MSE:',mse)
 print('Root mean squared error: ', rmse) 
 print('R2 score: ', r2) 
 
-#Primjer 4.: Prikaži grafikon residual vs. fitted. Komentiraj rezultat.
+>>>#Primjer 4.: Prikaži grafikon residual vs. fitted. Komentiraj rezultat.
 
 resid=Y-Y_pred
 
@@ -88,7 +88,177 @@ plt.show()
 #idealno je da ove točkice budu totalno random, tj. da ne možemo uočiti pravilnosti 
 #da imamo heteroskedastičnost, imali bi kao divergenciju 
 
-#Primjer 5: Ispiši procijenjene parametre te koeficijent determinacije u statsmodels paketu.
+>>>#Primjer 5: Ispiši procijenjene parametre te koeficijent determinacije u statsmodels paketu.
+
+import statsmodels.api as sm
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+>>>#Primjer 6: Ispiši procijenjene parametre te koeficijent determinacije u statsmodels paketu.
+
+#dodajemo sve google trends podatke u model i gledamo kakve su procjene
+#dodajemo sve stupce x-u
+
+X = data.iloc[:, 0:4].values.reshape(-1, 4)  #prva četiri stupca - GT podaci
+
+X0=sm.add_constant(X)
+reg_a_full=sm.OLS(Y,X0).fit()
+
+reg_a_full.summary()
+
+#Proučimo objekt reg_a.
+
+type(reg_a)
+dir(reg_a)
+
+>>>#Primjer 7: Procijeni četiri modela jednostavne linearne regresije gdje je y=retail, a x=jedna od GT varijabli.
+
+#kad biramo model, prvo pisemo sve moguće kombinacije
+#nakon toga gledamo koji ima najveći koeficijent determinacije i taj je najbolji
+#2 na k, s tim da je k broj nezavisnih varijabli
+
+#pravila za selekciju
+#postepeno uvodimo varijable u model, npr. dodamo prvo x1 -> y x1+x2 y x1+x3 y x1 x4
+#gledamo koji ima najveći korigirani R2
+#onda tom modelu dodamo x3 i x4, tj. y x1+x2+x3 y x1+x2+x4
+#i onda opet od tih modela gledamo koji imaju najveći R2
+
+#može biti i obrnutim redoslijedom tako da prvo uzmemo sve varijable i onda izuzimamo postepeno
+
+#model 1, x=cijena
+X = data.iloc[:, 0].values.reshape(-1, 1)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[0],"], beta : ",reg_a.params[1])
+
+#model 2, x=katalog
+X = data.iloc[:, 1].values.reshape(-1, 1)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[1],"], beta : ",reg_a.params[1])
+
+#model 3, x=lidl
+X = data.iloc[:, 2].values.reshape(-1, 1)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[2],"], beta : ",reg_a.params[1])
+
+#model 4, x=konzum
+X = data.iloc[:, 3].values.reshape(-1, 1)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[3],"], beta : ",reg_a.params[1])
+
+#Najbolji je model 1 jer je koeficijent determinacije najveći. 
+
+>>>#Primjer 8: Predloži način kako bi se odabrao najbolji linearni model od ponuđenih varijabli.
+
+#forward
+#1st step - cijena
+
+#2.1 - 2nd step, prva verzija
+
+X = data.iloc[:, [0,1]].values.reshape(-1, 2)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[[0,1]].values,"], beta : ",reg_a.params[1:3])
+
+#forward
+#1st step - cijena
+
+#2.2 - 2nd step, druga verzija
+
+X = data.iloc[:, [0,2]].values.reshape(-1, 2)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[[0,2]].values,"], beta : ",reg_a.params[1:3])
+
+#forward
+#1st step - cijena
+
+#2.3 - 2nd step, prva verzija
+
+X = data.iloc[:, [0,3]].values.reshape(-1, 2)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[[0,3]].values,"], beta : ",reg_a.params[1:3])
+
+#forward
+#1st step - cijena
+
+#2nd step - lidl
+
+#3.1. 3rd step, prva verzija
+
+X = data.iloc[:, [0,2,1]].values.reshape(-1, 3)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[[0,2,1]].values,"], beta : ",reg_a.params[1:3])
+
+#forward
+#1st step - cijena
+
+#2nd step - lidl
+
+#3.2. 3rd step, druga verzija
+
+X = data.iloc[:, [0,2,3]].values.reshape(-1, 3)  # values converts it into a numpy array
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[[0,2,3]].values,"], beta : ",reg_a.params[1:3])
+
+#Prema ovim izračunima najbolji bi bio predzadnji model jer ima najveći koeficijent determinacije.
+#Međutim, ovi modeli su nastali tako što smo u svaki dodavali više nezavisnih varijabli, što znali da treba gledati korigirani koeficijent determinacije. 
+
+#reg_a.rsquared_adj ako hoćemo računati korigirani 
+
+
+
+
+
+
+
+
 
 
 
