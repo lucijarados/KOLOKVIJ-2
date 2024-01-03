@@ -1,0 +1,96 @@
+>>>#Primjer 1A:Učitaj podatke iz csv multiTimeline.csv. Podatke prikaži grafički. Komentiraj.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = pd.read_csv("multiTimeline.csv", index_col=0, parse_dates=True) #kod mene multi_Timeline
+print(data)
+plt.plot(data, label=data.columns)
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Google Trends podaci")
+
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+#trebamo započeti s podacima od 2012. jer vidimo kaos prije toga vjerojatno zbog toga što podaci nisu bili dobro prikupljeni
+
+data=data.iloc[84:,]
+
+>>>#Primjer 1B:Prikaži grafički podatke pomoću dijagrama rasipanja. Komentiraj.
+
+plt.scatter(data["retail"],data["katalog"])
+#plt.scatter(dat["retail"],dat["cijena"])
+
+plt.title("Dijagram rasipanja")
+
+plt.show()
+plt.close()
+
+>>>#Primjer 2.: Procijeni model jednostavne linearne regresije gdje je y=retail, a x=cijena. Ucrtaj procijenjeni pravac.
+
+import numpy as np #izračuni
+import pandas as pd #učitavanje data framea
+import matplotlib.pyplot as plt #vizualizacija
+from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
+
+
+# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
+
+X = data.iloc[:, 0].values.reshape(-1, 1)  #nalazi se u 1. stupcu, što je ovdje 0.
+Y = data.iloc[:, 4].values.reshape(-1, 1)  #nalazi se u 5.stupcu, što je ovdje 4.
+# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
+
+#stvara objekt za linearnu regresiju
+linear_regressor = LinearRegression()  
+
+linear_regressor.fit(X, Y)  # perform linear regression
+Y_pred = linear_regressor.predict(X)  # make predictions
+
+plt.scatter(X, Y)
+plt.plot(X, Y_pred, color='red')
+plt.show()
+
+#Primjer 3: Ispiši procijenjene parametre te koeficijent determinacije.
+
+#koeficijent determinacije-modelom je objašnjeno % odstupanja
+#varijanca regresije, tj. stdev -prosječno odstupanje stvarnih od procijenjenih vrijednosti(RMSE)
+#cilj je da nam je odstupanje što manje
+#koeficijent determinacije, on je veći što je veći broj varijabli u modelu, zato je bolje koristiti korigirani
+
+from sklearn import metrics
+
+# model evaluation 
+mse=metrics.mean_squared_error(Y,Y_pred) 
+  
+rmse = np.sqrt(mse) 
+r2 = metrics.r2_score(Y, Y_pred) 
+  
+# printing values 
+print('Slope:' ,linear_regressor.coef_) 
+print('Intercept:', linear_regressor.intercept_) 
+print('MSE:',mse) 
+print('Root mean squared error: ', rmse) 
+print('R2 score: ', r2) 
+
+#Primjer 4.: Prikaži grafikon residual vs. fitted. Komentiraj rezultat.
+
+resid=Y-Y_pred
+
+plt.scatter(resid, Y_pred)
+
+plt.show()
+
+#idealno je da ove točkice budu totalno random, tj. da ne možemo uočiti pravilnosti 
+#da imamo heteroskedastičnost, imali bi kao divergenciju 
+
+#Primjer 5: Ispiši procijenjene parametre te koeficijent determinacije u statsmodels paketu.
+
+
+
+
+
