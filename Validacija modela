@@ -1,0 +1,431 @@
+#koristimo RMSE jer želimo minimizirati varijancu, tj. srednju kvadratnu pogrešku
+#RMSE je zapravo funkcija cilja
+#više varijabli, više parametara, znači da je model bolji i da je lakše prognozirati
+#kad interpretiramo konst. član, npr. prihod=0, potrošnja je npr 2000 kn to nema smisla jer je taj uzorak izvan naših podataka(x=0)
+
+>>>#Primjer 1A: Učitaj podatke iz GTdata.csv. Prikaži grafički potrošnju.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+#import openpyxl as oxl #za excel
+#u cmd: py -m pip install "openpyxl"
+
+#data = pd.read_excel('GTpodaci.xlsx', header=0, index_col=0,parse_dates=True)
+data = pd.read_csv('GTpodaci.csv', header=0, index_col=0,parse_dates=True)
+
+plt.plot(data["retail"])
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Potrošnja")
+
+
+plt.show()
+plt.close()
+
+>>>#Primjer 1B: Provjeri dimenziju učitanih podataka. Provjeri postoje li nepostojeći podaci.
+
+print(data.shape)
+
+print(data.isna().sum().sum()) #provjerava ima li nepoznatih podataka, 0 znači da nema nepostojećih vrijednosti
+
+>>>#Primjer 2: Procijeni model jednostavne linearne regresije za svaki GT niz. Izračunaj MAE i RMSE.
+
+#za ovih 300 želimo napraviti nizove 
+
+import numpy as np #izračuni
+import pandas as pd #učitavanje
+import matplotlib.pyplot as plt #vizualizacija
+from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
+
+# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
+
+Y = data.iloc[:, 299].values.reshape(-1, 1)  
+# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
+#pišu stvarni podaci
+
+#Za prvi GT indikator
+#stvara objekt za linearnu regresiju
+linear_regressor = LinearRegression() 
+
+X = data.iloc[:, 0].values.reshape(-1, 1)  #želimo nulti, tj. 1.stupac
+
+linear_regressor.fit(X, Y)  # perform linear regression
+Y_pred = linear_regressor.predict(X)  # make predictions
+Y_hat = Y_pred.reshape(-1, 1)  #procijenjeni podaci
+
+RMSE=np.sqrt(np.mean(((Y-Y_hat)**2))) #prosječno kvadratno odstupanje 
+
+MAE=np.mean((np.abs(Y-Y_hat)))
+print("RMSE:",RMSE)
+print("MAE:",MAE)
+
+###################################
+for i in range(0,299):
+    linear_regressor = LinearRegression() 
+
+    X = data.iloc[:, i].values.reshape(-1, 1)  #i dalje želimo 1 stupac da napravi , zapravo samo x mijenjamo u odnosu na prethodni kod jer želimo da nam se to mijenja 
+
+    linear_regressor.fit(X, Y)  # perform linear regression
+    Y_pred = linear_regressor.predict(X)  # make predictions
+    Y_hat = Y_pred.reshape(-1, 1)  
+
+    RMSE=np.sqrt(np.mean(((Y-Y_hat)**2)))
+
+    MAE=np.mean((np.abs(Y-Y_hat)))
+    print("RMSE:",RMSE)
+    print("MAE:",MAE)
+
+####################################
+
+Results=pd.DataFrame(np.nan, index=data.columns[0:299], columns=["RMSE","MAE"]) #mi želimo da nam ispiše najmanju vrijednost, možemo samo copy pasteat u excel i naći najmanju vrijednost
+
+print(Results) #ovo će nam zapravo isprintati prazni dataframe u koji ćemo samo ispisivati Nan-ove
+
+
+for i in range(0,299): #dobro je prvo napraviti za manji broj da vidimo je li valja
+    linear_regressor = LinearRegression() 
+
+    X = data.iloc[:,i].values.reshape(-1, 1)  #u i-tom retku ću upisati nešto u RMSE i MAE
+
+    linear_regressor.fit(X,Y)  # perform linear regression
+    Y_pred = linear_regressor.predict(X)  # make predictions
+    Y_hat = Y_pred.reshape(-1, 1)  
+
+    RMSE=np.sqrt(np.mean(((Y-Y_hat)**2)))
+
+    #RMSE=np.sqrt(metrics.mean_squared_error(Y,Y_pred)) 
+
+    MAE=np.mean((np.abs(Y-Y_hat)))
+    Results.iloc[i,0]=RMSE
+    Results.iloc[i,1]=MAE
+
+print(Results)
+
+>>>#Primjer 3: Prikaži grafički izračunane RMSE i MAE.
+
+plt.plot(Results["RMSE"],label=range(0,299))
+
+#plt.xticks([])
+plt.xticks([0,100,200])
+plt.show()
+plt.close() #iako na grafikonima te razlike izgledaju veliko, kad pogledamo brojeve zapravo su jako male
+
+
+
+plt.plot(Results["MAE"],label=range(0,299))
+
+#plt.xticks([])
+plt.xticks([0,100,200])
+plt.show()
+plt.close()
+
+>>>#Primjer 4: Pronađi model s minimalnim RMSE i MAE. O kojim GT kategorijama se radi?
+
+print(np.min(Results["RMSE"]))
+print(np.argmin(Results["RMSE"]))
+print(Results.index[np.argmin(Results["RMSE"])]) #argmin nam služi da vidimo o kojoj se varijabli radi 
+#postiže se za kategoriju 146, tj. Bowling 
+#ispada da je kuglanje visoko povezano s potrošnjom
+
+print(np.min(Results["MAE"]))
+print(np.argmin(Results["MAE"]))
+print(Results.index[np.argmin(Results["MAE"])])
+#ispadne da su Web usluge
+
+########################
+
+print(Results)
+
+Results.sort_values(by='RMSE') #sortiramo počevši s najmanjim RMSE 
+
+>>>#Primjer 5: Izračunaj za koliko posto drugi najbolji model ima veći RMSE od najboljeg.
+
+print(Results.iloc[45,0]/Results.iloc[145,0]*100-100) #jer imamo 146. i 46. podatak pa ih stavljamo u omjer da dobijemo postotak
+
+>>>#Primjer 6: Prikaži pomoću grafikona procjenu Y iz dva najbolja modela (prema RMSE) te zavisnu varijablu.
+
+X1 = data.iloc[:, 145].values.reshape(-1, 1)  #x1
+X2 = data.iloc[:, 45].values.reshape(-1, 1)   #x2
+
+linear_regressor = LinearRegression() 
+linear_regressor.fit(X1, Y)  # perform linear regression
+Y_pred1 = linear_regressor.predict(X1)  # make predictions
+
+linear_regressor = LinearRegression() 
+linear_regressor.fit(X2, Y)  # perform linear regression
+Y_pred2 = linear_regressor.predict(X2)  # make predictions
+
+#želimo dobit procijenjene vrijednosti za x1 i x2
+
+print(Y_pred1)
+
+plt.plot(data["retail"].values.reshape(-1, 1))
+plt.plot(Y_pred1)
+plt.plot(Y_pred2)
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Potrošnja")
+
+
+plt.show()
+plt.close()
+
+
+#plavo je stvarna potrošnja
+#narančasti je najbolji model
+#zeleni je drugi najbolji model
+#modeli su konzervativniji od stvarne potrošnje
+#RMSE je najviše osjetljiv na velike reziduale 
+
+>>>#Primjer 7: Izračunaj koeficijent determinacije i korigirani koeficijent determinacije za 30 modela gdje k-ti model sadrži prvih k nezavisnih varijabli
+
+#koeficijent determinacije se može smanjiti ako postoji mulikolinearnost, što znači da taj model zapravo nismo ni trebali razmatrati
+#korigirani koeficijent determinacije će se povećati samo ako se pogreška reziduala smanji, ova varijanca s kapom se ne mijenja 
+#procjena jednim brojem - metoda momenata
+#veliki pi u formuli na slajdu 14. znači umnožak
+#dosad kad smo radili OLS nismo rekli da distribucija mora biti određenog oblika
+#kod funkcije gustoće nam je bitna pretpostavka o obliku distribucije varijable 
+#mi ćemo pretpostaviti da je distribucija normalnog oblika
+#kod MLE mi iznad svake točkice radimo normalnu distribuciju, gleda se "ponderirana udaljenost" , a nju ponderira ta funkcija vjerojatnosti - maksimiziramo vjerodostojnost
+#što je veći rezidual, veći je outlier
+#informacijski kriteriji se baziraju na vjerodostojnosti 
+#ako imamo više varijabli od podataka, ne možemo ništa
+
+#želimo 30 različitih modela 
+#1.model sadrži 1. varijablu
+#2. model sadrži 1. i 2. varijablu
+#30.ti model sadrži 30 varijabli
+
+from sklearn import metrics
+
+Results2=pd.DataFrame(np.nan, index=data.columns[0:30], columns=["R2","R2_adj"])
+
+Y = data.iloc[:, 299].values.reshape(-1, 1)  
+#print(Results2)
+
+for i in range(0,30):
+    linear_regressor = LinearRegression() 
+
+    X = data.iloc[:, 0:(i+1)].values.reshape(-1, (i+1))  
+
+    linear_regressor.fit(X, Y)  # perform linear regression
+    Y_pred = linear_regressor.predict(X)  # make predictions
+  
+    [n,k]=X.shape
+    
+    #print(n,k)
+    
+    R2=metrics.r2_score(Y, Y_pred)
+    
+    R2adj=1-(1-R2)*(n-1)/(n-k-1)
+    #RMSE=np.sqrt(metrics.mean_squared_error(Y,Y_pred)) 
+
+    Results2.iloc[i,0]=R2
+    Results2.iloc[i,1]=R2adj
+
+#print(Results2)
+#del Results2 #za brisanje 
+
+#Results2=pd.DataFrame(np.nan, index=data.columns[0:30], columns=["R2","R2_adj"])
+
+#2. način
+import statsmodels.api as sm
+
+for i in range(0,30):
+    X = data.iloc[:, 0:(i+1)].values.reshape(-1, (i+1))  # values converts it into a numpy array
+
+    X0=sm.add_constant(X)
+    reg_a=sm.OLS(Y,X0).fit()
+
+
+    [n,k]=X.shape
+    
+    #print(n,k)
+    
+    R2=reg_a.rsquared
+    
+    R2adj=1-(1-R2)*(n-1)/(n-k-1)
+
+    Results2.iloc[i,0]=R2
+    Results2.iloc[i,1]=R2adj
+    #kod R2 očekujemo rast, a kod adjusted ne jer nisu sve varijable dobre za model
+
+print(Results2)
+
+>>>#Primjer 8: Prikaži grafički navedene rezultate.
+
+plt.plot(Results2["R2"],label="R2")
+plt.plot(Results2["R2_adj"],label="Adj R2")
+
+#plt.xticks([])
+plt.xticks([0,10,20])
+plt.legend(loc='upper left', fontsize='small')
+plt.show()
+plt.close()
+#dodavanjem nekih varijabli, R2 značajno raste
+
+>>>#Primjer 9: Izračunaj AIC kriterij za prethodnih 30 modela te prikaži grafički.
+
+import statsmodels.api as sm
+
+ICr=pd.DataFrame(np.nan, index=data.columns[0:30], columns=["AIC","BIC"])
+
+for i in range(0,30):
+    X = data.iloc[:, 0:(i+1)].values.reshape(-1, (i+1))  # values converts it into a numpy array
+
+    X0=sm.add_constant(X)
+    reg_a=sm.OLS(Y,X0).fit()
+   
+    aic =reg_a.aic
+    bic = reg_a.bic
+    
+    ICr.iloc[i,0]=aic
+    ICr.iloc[i,1]=bic
+
+
+#grafički prikaz
+
+plt.plot(ICr["AIC"],label="AIC")
+plt.plot(ICr["BIC"],label="BIC")
+
+
+#plt.xticks([])
+plt.xticks([0,10,20])
+plt.legend(loc='upper left', fontsize='small')
+plt.show()
+plt.close()
+
+#BIC ima jaču penalizaciju od AIC 
+
+>>>#Primjer 10: Podijeli podatke na train i test u omjeru 70-30.
+
+#u slučaju potrošnje ćemo uzeti za ostalih 30% ovaj period koji se odnosi na covid
+from sklearn.model_selection import train_test_split
+
+del X, Y
+y = data.iloc[:, 299].values.reshape(-1, 1) 
+X = data.iloc[:, 0:299]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=False) #neće raditi randomizaciju nego 70/30 pravilo
+
+print(X_train)
+
+>>>#Primjer 11: Izračunaj procjenu za model s prve tri GT varijable i sljedeće tri. Usporedi modele na train i test uzorku.
+
+import statsmodels.api as sm
+
+X1_train = X_train.iloc[:, 0:3].values.reshape(-1, 3)
+X1_test = X_test.iloc[:, 0:3].values.reshape(-1, 3)  
+
+X0_1_train=sm.add_constant(X1_train)
+X0_1_test=sm.add_constant(X1_test)
+
+reg1=sm.OLS(y_train,X0_1_train).fit()
+
+fit1 = reg1.predict(X0_1_train)
+pred1 = reg1.predict(X0_1_test)
+
+X2_train = X_train.iloc[:, 3:6].values.reshape(-1, 3)
+X2_test = X_test.iloc[:, 3:6].values.reshape(-1, 3)  
+
+X0_2_train=sm.add_constant(X2_train)
+X0_2_test=sm.add_constant(X2_test)
+
+reg2=sm.OLS(y_train,X0_2_train).fit()
+
+fit2 = reg2.predict(X0_2_train)
+pred2 = reg2.predict(X0_2_test)
+
+print("Train sample RMSE:", np.sqrt(np.mean(((y_train-fit1)**2))),np.sqrt(np.mean(((y_train-fit2)**2))))
+
+print("Test sample RMSE:", np.sqrt(np.mean(((y_test-pred1)**2))),np.sqrt(np.mean(((y_test-pred2)**2))))
+#1. model je bolji u train i u test
+
+>>>#Primjer 12: Želimo se zadržati unutar modela linearne regresije, kako da kreiramo 5 različitih modela za procjenu retail?
+
+n_model=5
+n_var=15
+
+from sklearn.model_selection import train_test_split
+
+del X, y
+y = data.iloc[:, 299].values.reshape(-1, 1) 
+X = data.iloc[:, 0:299]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.35, shuffle=False)
+
+
+Results_n=pd.DataFrame(np.nan, index=range(0,n_model), columns=["RMSE_train","RMSE_test"])
+
+for i in range(0,n_model):
+
+    popis = np.random.permutation(299)[:n_var]
+    X2_train = X_train.iloc[:, popis].values.reshape(-1,n_var)
+    X2_test = X_test.iloc[:, popis].values.reshape(-1, n_var)  
+
+    X0_2_train=sm.add_constant(X2_train)
+    X0_2_test=sm.add_constant(X2_test)
+
+    reg2=sm.OLS(y_train,X0_2_train).fit()
+
+    fit2 = reg2.predict(X0_2_train)
+    pred2 = reg2.predict(X0_2_test)
+
+    Results_n.iloc[i,0]= np.sqrt(np.mean(((y_train-fit2)**2)))
+    Results_n.iloc[i,1]= np.sqrt(np.mean(((y_test-pred2)**2)))
+    #Results_n.iloc[i,2:(2+n_var)]=np.array(popis).reshape(1,-1)
+
+print(Results_n)
+
+>>>#Primjer 13: Izračunaj krosvalidaciju za model koji sadrži prvih pet GT indikatora.
+
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+y = data.iloc[:, 299].values.reshape(-1, 1)
+
+# Create a linear regression model
+model = LinearRegression()
+
+linear_regressor = LinearRegression() 
+
+X = data.iloc[:, 0:5].values.reshape(-1, 5)  
+
+linear_regressor.fit(X, y)  # perform linear regression
+
+# Perform k-fold cross-validation (e.g., k=5)
+cv_scores = cross_val_score(model, X, y, cv=5, scoring='neg_mean_squared_error')
+
+# Note: neg_mean_squared_error is used because cross_val_score maximizes the score, and we want to minimize the mean squared error.
+
+# Display cross-validation scores
+print("Cross-Validation Scores:", cv_scores)
+print("Mean Cross-Validation Score:", np.mean(cv_scores))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
