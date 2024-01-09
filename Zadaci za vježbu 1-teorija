@@ -1,0 +1,213 @@
+#1. Objasni kako se može pokrenuti program Jupyter Lab.
+
+Jupyter Lab se može pokrenuti tako što prilikom otvaranja dokumenta, u alatnoj traci upišemo "cmd" što će nam otvoriti naredbeni redak u koji onda upišemo "jupyter lab". 
+
+#2. Kako se naziva naredba za ispis rezultata?
+
+Naredba se zove "print".
+
+#3. Ako je x=true i y=true, što je rezultat ispisa x+y? Objasni rezultat.
+
+Rezultat je 2, budući da se True tretira kao 1, a False kao 0 pa je onda True+True=1+1=2.
+
+#4. Što nastaje pokretanjem sljedećih naredbi?
+def naziv():
+print("bbc")
+
+Ako pokrenemo ove naredbe prvo će se javiti error jer nemamo uvlaku ispred print, a ako to ispravimo ništa se neće dogoditi jer smo samo definirali funkciju, a nismo ju pozvali.
+
+#5. Što je numpy, a što np u naredbi install numpy as np. Može li umjesto np pisati nešto drugo?
+
+Numpy je paket za efikasno pohranjivanje i manipulaciju numeričkih nizova. Np predstavlja alias numpy paketa u kodu, a može se koristiti bilo koji drugi naziv. Alias se koristi kako bismo 
+precizirali Pythonu iz kojeg paketa želimo funkciju, budući da postoje funkcije koje imaju isti naziv, ali dolaze iz drukčijih paketa i ne rade isto. 
+
+#6. Što omogućava naredba np.seed(1)?
+
+Naredba np.seed nam omogućava da svi dobijemo isti rezultat kod randomizacije, znači ako želimo generirati neki niz slučajnih brojeva koristit ćemo seed kako bi svi dobili te iste slučajne brojeve.
+Seed je koristan ako podučavamo nekog ili radimo s njim kako bi svi dobili jednake rezultate. Seed nam omogućuje da koristimo isti početni broj, tj. integer s kojim onda započinje generaciju slučajnih brojeva.
+
+#7. Zašto koristimo naredbu copy u sljedećim naredbama?
+x= np.random.random(5)
+y= x.copy()
+
+Koristimo naredbu copy kako kreirali novu varijablu pod imenom y koja će sadržavati iste elemente kao i x, međutim ako napravimo promjenu na x ona se onda neće dogoditi i u y, već će on ostati
+nepromijenjen. Koristimo ju kad kopiramo objekte i želimo da svaki postoji na svojoj lokaciji. 
+
+#8. Jesu li naredbe np.random.random() i np.randomint iste? Objasni razliku.
+
+Nisu iste jer prva generira slučajne brojeve iz uniformne, a randomint iz jednolike distribucije. 
+
+#9. Navedi i objasni barem jedan praktičan slučaj kada se koriste slučajni brojevi.
+
+Slučajni brojevi koriste se kod provođenja simulacija, tj. kad želimo oponašati neke uvjete ili situacije iz stvarnog svijeta. Primjer bi bile Monte Carlo simulacije koje možemo koristiti za predviđanje 
+prinosa dionica, a temelje se na generiranju velikog broja uzoraka koji sadrže slučajne brojeve.
+
+#10. Koji je temeljni objekt u numpy paketu? Objasnite temeljne karakteristike.
+
+Temeljni objekt je ndarray koji predstavlja n-dimenzionalni niz podataka istog tipa. Temeljne su karakteristike: oblik, tj. dimenzije, vrsta podataka koja mora biti jednaka, mogućnost broadcastinga, 
+mogućnost različitih matematičkih i logičkih operacija. 
+
+#11. Što je pandas, a što pd u naredbi install pandas as pd. Može li umjesto pd pisati nešto drugo?
+
+Pandas je paket koji služi za pohranjivanje i manipulaciju data frame-ova, tj. podatkovnih okvira. Pd predstavlja alias za pandas paket, a umjesto njega može pisati i nešto drugo jer je on proizvoljno određen.
+
+#12. Koji je temeljni objekt u pandas paketu? Objasnite temeljne karakteristike.
+
+Temeljni objekt u pandas paketu je data frame koji je dvodimenzionalan. On može sadržavati podatke različitog tipa, podatke za koje želimo imati oznake retka i stupca, nepostojeće podatke i sl. Data frame se može generirati unutar koda, 
+ali uglavnom nastaje importiranjem podataka. Nad njime možemo provoditi aritmetičke i statističke operacije, filtriranje, selektiranje, grupiranje, merganje, indeksiranje...Može se koristiti i a time series.
+
+#13. Može li se pd.DataFrame napraviti iz np.array objekta? Vrijedi li obratno?
+
+Data frame se može napraviti iz np.array objekta, ali iz data framea ne možemo napraviti np.array objekt ukoliko data frame ima različite tipove podataka jer on mora sadržavati iste tipove podataka. 
+Isto tako, gube se nazivi stupaca i redaka.
+
+#14. Kako se pristupa elementima np.array objekta?
+
+Pristupa im se tako što upišemo ime objekta i zatim otvorimo uglatu zagradu u koju onda upisujemo poziciju ili elemente koje želimo, npr.
+Prvi element matrice: x[0,0]
+• Zadnji element iz 1.retka matrice: x[0,-1]
+• Prva dva retka matrice u prvom stupcu: x[0:2,0]
+• Prva dva retka matrice: x[0:2,:]
+• Parni stupci matrice: x[:,1:6:2]
+
+#15. Kako se pristupa elementima pd.DataFrame objekta?
+
+Pristupa im se korištenjem loc ili iloc funkcije. Loc funkcija je label-based, tj. pristupamo elementu tako što upisujemo oznaku retka/stupca u kojem se nalazi, a iloc funkcija je integer-based,
+što znači da upisujemo broj retka/stupca u kojem se element nalazi.
+
+#16. Kako treba biti organiziran csv i xls dokument da bi pandas iz njega mogao kreirati DataFrame?
+
+Ako želimo da Python DataFrame shvaća kao vremenski niz, potrebno
+je to naznačiti prilikom učitavanja
+• Najjednostavnije je da csv/xlx u prvom stupcu sadrži oznake za
+vremenski niz
+• Format „gggg-mm-dd”, ali python zna dobro „pogoditi” i drugačije
+formate
+• dat = pd.read_csv("____.csv", index_col=0,
+parse_dates=True)
+• Važno kod grafičkog prikaza
+
+#17. Što radi naredba install matplotlib.pyplot as plt?
+
+Ova naredba instalira paket matplotlib te ga importira pod aliasom plt.
+
+#18. Što nastaje naredbama: plt.plot, plt.bar, plt.hist, plt.scatter?
+
+Linijski grafikon, stupčasti grafikon, histogram i dijagram rasipanja. 
+
+#19. Definirajte model jednostavne linearne regresije s tri nezavisne varijable. Definirajte funkciju cilja.
+
+yi=ß0 + ß1x1 + ß2x2 + ß3x3 + ε
+
+Funkcija cilja pokušava pronaći pravac tako da je udaljenost točaka od pravca najmanja moguća, tj. određuje se pravac za koji se postiže minimum zbroja kvadrata udaljenosti.
+
+#20. Navedite i kratko objasnite Gauss-Markov uvjete.
+
+UVJETI:
+Za svaki i = 1,2, . . . , n
+1. Centriranost: E(εi) = 0, očekivana vrijednost je 0
+2. Konačna i identična varijanca: Var εi = σ^2 < ∞, varijanca je konstantna
+3. Nekoreliranost: Cov(εi,εj) = 0, za svaki i ≠ j,, greške relacije su nekorelirane
+
+DODATNI UVJETI:
+za svako i = 1,2, . . . , n
+
+4. Normalnost: εi ∼ N(0, σ^2)
+
+5. Regresorske varijable x1, ... , xk su međusobno nekorelirane i niti
+jedna nije konstanta.
+
+Objašnjenje 5. uvjeta: osigurava postojanje jedinstvenog rješenja
+optimizacije
+
+#21. Kojim metodama se mogu procijeniti parametri u modelu OLS?
+
+Metodom momenata i maksimizacijom vjerodostojnosti.
+
+#22. Objasni koeficijent determinacije. Što se događa dodavanjem prediktora u model?
+
+Koeficijent determinacije nam pokazuje koliko je posto odstupanja protumačeno modelom. Dodavanjem prediktora u model on se povećava. 
+
+#23. Usporedba modela
+
+a) prvi model ima x1 i x2, dok drugi model ima x1,x2,x3,x4
+R2 nam je veći za drugi model jer raste broj varijabli, što znači da je više odstupanja protumačeno modelom
+
+b) isti broj varijabli u modelima, ali je sad R2 veći za prvi model jer postoji problem multikolinearnosti 
+
+#24. Objasni problem prenaučenosti.
+
+Kad modelu „damo” neki uzorak, onda može jako dobro nauči raditi procjene za te podatke, a izvan tog uzorka je upitno.
+
+#25. Što je parsimonija?
+
+"Parsimonija" je pojam koji se koristi u različitim kontekstima, a osnovno značenje se odnosi na princip jednostavnosti, ekonomske upotrebe sredstava ili minimalne složenosti.
+U statistici, parsimonijski modeli su oni koji su dovoljno jednostavni da objasne podatke, ali ne sadrže suvišne elemente.
+
+#26. Koji se indikatori kvalitete fita modela računaju pomoću sume kvadrata reziduala?
+
+RMSE i korigirani koeficijent determinacije?
+
+#27. Koji se indikatori kvalitete fita modela računaju pomoću vjerodostojnosti?
+
+AIC i BIC.
+
+#28. Objasni dijeljenje podataka u podatkovnoj znanosti.
+
+Nakon što smo procijenili modele, bilo bi dobro da ga ih možemo usporediti na novom datasetu, stoga dijelimo podatke na train i test. Train su oni na kojima se model trenira, a test dio na kojem
+se uspoređuju modeli. Dijeljenje podataka sprječava prenaučenost modela, vrši simulaciju stvarnog okruženja upotrebe našeg modela, vrši dodatnu prilagodbu finalnog modela 
+i test set pruža objektivnu mogućnost za usporedbu performansi i stabilnosti modela. Ako model daje slične rezultate na različitim podskupovimapodataka, to ukazuje na njegovu robusnost.
+
+#29. Čemu služi train dio podataka? Čemu služi test dio podataka?
+
+Train dio:
+• In-sample
+• Koristimo za treniranje modela
+• Isprobavamo razne obitelji modela
+(linearni vs nelinearni)
+• Isprobavamo razne kombinacije
+parametara
+• Isprobavamo razne
+transformacije varijabli
+
+Test dio:
+• Out-of-sample
+• Usporedba karakteristika modela
+(osjetljivost parametara,
+pretpostavki, transformacija)
+• Robusnost
+• Usporedba s drugim modelima
+• Odabir „najboljeg” modela
+
+#30. Objasni forward selekciju u OLS modelu na primjeru s tri nezavisne varijable.
+
+1. Postupak starta s modelom
+koji sadrži samo konstantu
+2. Sve dok je moguće poboljšati
+model ponavljaj
+1. U trenutno najbolji model
+dodaje se po jedna varijabla
+2. Računa se kriterij za svako
+dodavanje
+3. U modelu se zadržava nova
+varijabla koja optimizira kriterij
+
+1. model: samo konstanta
+2. model: x1
+3. model: x1 + x2
+4. model: x1 + x2 + x3 ?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
