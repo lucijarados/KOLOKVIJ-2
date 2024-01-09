@@ -1,0 +1,32 @@
+#Zadatak 2.
+>>>Ispiši tekst "Prvi redak".
+
+print("Prvi redak")
+
+>>>Definiraj x=2 te ispiši tekst "x je jednak" te vrijednost od x.
+
+x=2
+print("x je jednak", x)
+
+>>>Definiraj x=2 i y=5 te ispiši rezultat logičke provjere je li x veći ili jednak od y.
+
+x=2
+y=5
+print("x je veći ili jednak y", x >= y)
+
+>>>Definiraj x=2, y=5, z=7. Ispiši rezultat aritmetičke operacije y^x * logz.
+
+import numpy as np
+
+x=2
+y=5
+z=7
+
+rezultat=np.power(y,x)*np.log(z)
+print(rezultat) 
+
+#računa ln, a ne log?
+
+
+
+
