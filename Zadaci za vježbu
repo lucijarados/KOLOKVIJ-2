@@ -22,10 +22,10 @@ x=2
 y=5
 z=7
 
-rezultat=np.power(y,x)*np.log(z)
+rezultat=np.power(y,x)*np.log10(z)
 print(rezultat) 
 
-#računa ln, a ne log?
+#log računa ln, a log10 računa log
 
 #Zadatak 3.
 >>>Kreiraj if naredbu koja za zadani broj x ispisuje "Broj nije izdvojenica", ako se nalazi između -3 i 3. U protivnom if naredba ispisuje "Broj je izdvojenica". (Uputa: Na početku zadajte da je 
