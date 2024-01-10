@@ -27,6 +27,149 @@ print(rezultat)
 
 #računa ln, a ne log?
 
+#Zadatak 3.
+>>>Kreiraj if naredbu koja za zadani broj x ispisuje "Broj nije izdvojenica", ako se nalazi između -3 i 3. U protivnom if naredba ispisuje "Broj je izdvojenica". (Uputa: Na početku zadajte da je 
+ te provjerite točnost if naredbe. Mijenjajte vrijednost x kako bi se uvjerili funkcionira li sve točno.
+
+x=2
+
+if x > -3 and x < 3:
+    print ("Broj nije izdvojenica")
+else:
+    print ("Broj je izdvojenica")
+
+>>>Kreiraj for naredbu koja iterira po elementima liste [11,13,17,19] te ispisuje elemente liste.
+
+x=[11,13,17,19]
+
+for i in x:
+    print(i)
+
+>>>Kreiraj for naredbu koja iterira po elementima liste [11,13,17,19] te ispisuje True ako se broj čita isto s lijeva i s desna.
+
+brojevi = [11, 13, 17, 19]
+
+for i in brojevi:
+    str_i = str(i)
+    if str_i == str_i[::-1]:
+        print(True)
+    else:
+        print(False)
+
+#Zadatak 4. Učitaj paket NumPy pod alisom np te riješi sljedeće zadatke:
+>>>Definiraj matricu nula 4x7, oznaka: A.
+
+import numpy as np
+
+A=np.zeros((4,7))
+print(A)
+
+>>>Definiraj matricu jedinica 4x7, oznaka: B.
+
+B=np.ones((4,7))
+print(B)
+
+>>>Definiraj matricu slučajnih brojeva iz jednolike distribucije s modalitetima 0,1,2,3,4, dimenzija 4x4, oznaka: C. 
+Izračunaj C^2 i CxC. Razlikuju li se rezultati? Objasni.
+
+C=np.random.randint(0,5,(4,4))
+
+print(C)
+
+#kvadriranje
+C_kvadrat=np.power(C,2)
+print(C_kvadrat)
+
+#množenje
+C = np.array([[2, 0, 4, 1],
+              [4, 1, 1, 3],
+              [4, 1, 3, 1],
+              [2, 2, 3, 2]])
+
+rezultat_mnozenja = np.dot(C, C)
+
+print(rezultat_mnozenja)
+
+Rezultati se razlikuju jer kod kvadriranja rezultat je matrica u kojoj je svaki element kvadriran, a kod množenja se vrši matrično množenje.
+
+>>>Definiraj matricu D proizvoljnih dimenzija te ispiši njen broj stupaca i redaka.
+
+D=np.array([[11, 13, 17, 19], [10, 12, 16, 18]])
+print(D)
+
+print("oblik matrice", np.shape(D))
+
+>>> Definiraj matricu E dimenzija 20x1 koja sadrži slučajne brojeve iz uniformne distribucije s modalitetima u [0,1].
+Ispiši prvi element, sedmi element, te predzadnji element.
+
+E=np.random.random((20,1))
+print(E)
+
+print("1.element", E[0,0])
+print("7.element", E[6,0])
+print("predzadnji element", E[18,0])
+
+>>>Definiraj matricu F proizvoljnih dimenzija (broj redaka i stupaca je veći od 5) te ispiši parne retke.
+
+F=np.random.random((6,6))
+print(F)
+
+print("\n parni retci", F[1:6:2,:])
+
+>>>Definiraj matricu G proizvoljnih dimenzija (broj redaka i stupaca je veći od 5) te ispiši maksimalni element matrice,
+poziciju maksimalnog elementa te maksimum po stupcima.
+
+G=np.random.normal(0,1,(7,7))
+print(G)
+
+#maksimalni element
+def pronadi_maksimalni_element(G):
+    # Koristi list comprehension za dobivanje svih elemenata iz matrice
+    svi_elementi = [element for red in G for element in red]
+    
+    # Pronađi maksimalni element u listi svih elemenata
+    maksimalni_element = max(svi_elementi)
+    
+    return maksimalni_element
+
+rezultat = pronadi_maksimalni_element(G)
+print("Maksimalni element matrice je:", rezultat)
+
+maksimalni_element = G[0][0]
+indeksi_maksimalnog_elementa = (0, 0)
+
+#pozicija
+for i, red in enumerate(G):
+    # Iterirajte kroz elemente u svakom redu
+    for j, element in enumerate(red):
+        # Ako je trenutni element veći od trenutnog maksimalnog, ažurirajte maksimalni element i indekse
+        if element > maksimalni_element:
+            maksimalni_element = element
+            indeksi_maksimalnog_elementa = (i, j)
+
+# Ispis pozicije maksimalnog elementa nakon što je petlja završena
+print("Pozicija maksimalnog elementa u matrici je:", indeksi_maksimalnog_elementa)
+
+#maksimum po stupcima
+def maksimum_po_stupcima(G):
+    # Pretvori matricu u NumPy array
+    np_matrica = np.array(G)
+    
+    # Koristi funkciju np.max s parametrom axis=0 za pronalaženje maksimuma po stupcima
+    maksimumi_po_stupcima = np.max(np_matrica, axis=0)
+    
+    return maksimumi_po_stupcima
+
+
+rezultat = maksimum_po_stupcima(G)
+print("Maksimumi po stupcima su:", rezultat)
+
+
+
+
+
+
+
 
 
 
