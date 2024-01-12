@@ -143,6 +143,10 @@ print(y)
 
 print(x and y)
 
+#kraća verzija
+a=7
+print("a se nalazi unutar intervala=", a>5 and a<10)
+
 #Primjer 9.
 >>>>>>Želimo provjeriti nalazi li se vrijednost varijable c izvan
 intervala 5,10 . Pretpostavimo 3 različite varijante varijable c, pri
@@ -184,6 +188,10 @@ print(y)
 
 print(x or y)
 
+#kraća verzija
+c=7
+print("c se nalazi izvan intervala=", c<5 or c>10)
+
 #Primjer 10.
 >>>>>>Pretpostavimo da je vrijednost jedne varijable True, a
 druge False. Primijenite operator not na obje varijable i ispišite
@@ -203,6 +211,9 @@ odgovarajućeg logičkog operatora.
 provjera=prosjek>87
 print(provjera)
 print(not provjera)
+
+#kraća verzija
+print("rezultat je veći od 87", not rezultat>87)
 
 >>>#zadatak iz google forms
 
@@ -354,8 +365,5 @@ def lag(bdp):
 bdp_cro = [12737.7, 10891.8, 11489.5, 12431.5, 13236.6, 13208.1, 13531.1, 13892.7, 14258.5, 14386.5, 14311.5, 14357.9, 14480.2, 14714.9]
 bdp_jucer = lag(bdp_cro)
 print(bdp_jucer)
-
-#Zadatak 8.
->>>>>>Definirajte funkciju koja računa stopu rasta BDP-a (podaci iz primjera 18). Napomena: stopa rasta računa se kao (𝑏𝑑𝑝_𝑑𝑎𝑛𝑎𝑠 – 𝑏𝑑𝑝_𝑗𝑢𝑐𝑒𝑟)/𝑏𝑝𝑑_𝑗𝑢𝑐𝑒𝑟 ∗ 100
 
 
