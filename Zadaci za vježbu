@@ -169,6 +169,135 @@ Google Trends podaci se interpretiraju kao popularnost pretraživanja pojma, dok
 Svi podaci su izračunani za Hrvatsku za period 01/2020 - 11/2023. Riješi sljedeće zadatke:
 >>>Objasni značenje index_col=0 i parse_dates=True.
 
+#index.col=0 znači da će se prvi stupac podataka iz CSV-a koristiti kao indeks data framea
+#parse_dates=True naglašava Pythonu da se radi o vremenskom nizu podataka
+
+>>>Objasni elemente objekta data: columns, index i values.
+
+#columns je oznaka stupca, index je oznaka retka, a values se odnosi na podatke koji su pohranjeni u data frameu
+
+>>> Ispiši prvi redak i prvi stupac. Objasni što prikazuju ispisani podaci.
+
+print(data.iloc[0,:])
+print(data.iloc[:,0])
+
+#u ispisu prvog retka vidljivi su nazivi stupaca, tj. njihove oznake
+#u ispisu prvog stupca vidljivi su podaci o popularnosti pojma financije
+
+>>>Pomoću for petlje izračunaj prvu diferenciju za niz inflacija i prikaži ga grafički.
+
+delta = pd.DataFrame(np.nan, index=data.index, columns=data.columns)
+#print(delta)
+#nan je funkcija "nepostojeća vrijednost"
+
+[m,n]=data.shape #m-broj redaka, n-broj stupaca
+
+# 2. stupac
+for i in range(1,m): #krećemo od drugog retka jer nemamo vrijednosti prije 1.razdoblja
+    delta.iloc[i,1]=data.iloc[i,1]-data.iloc[(i-1),1] #punimo 2. stupac, trebaju nam diferencije znači vrijednost danas-vrijednost jučer
+
+print(delta.iloc[:,1]) #ili print(delta.iloc[:,:]) ako želimo cijelu tablicu
+
+#grafički prikaz
+import matplotlib.pyplot as plt
+
+plt.plot(delta.loc["2010-01-01":,"inflacija"], label=delta.columns[1])
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Prva diferencija")
+plt.title("Google Trends podaci")
+#plt.yticks([0,25,50,75,100])
+#plt.grid(True)
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+>>> Grafički prikaži sva tri GT indikatora, što zaključuješ?
+
+plt.plot(data, label=data.columns)
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Google Trends podaci")
+#plt.yticks([0,25,50,75,100])
+#plt.grid(True)
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+#Iz grafičkog prikaza možemo zaključiti da popularnost pretraživanja "financija" konstantno varira, stacionarnost niza?
+#Za pojam inflacije vidimo značajan rast popularnosti poslije 2020. - pandemija.
+#Za pojam recesije također vidimo manji porast 2020.
+#Pouzdanje potrošača varira, raste polako nakon globalne krize 2008., a zatim 2020. opet doživljava pad s obzirom na pandemiju.
+
+>>>Pomoću scatter plota prikaži GT indikatore recesija i inflacija, što zaključuješ?
+
+plt.style.use("classic")
+
+plt.scatter(data["recesija"],data["inflacija"])
+
+plt.title("Dijagram rasipanja")
+
+plt.show()
+plt.close()
+
+#Iz dijagrama rasipanja možemo uočiti da ne postoji veza između popularnosti pojmova recesija i inflacija ni u kojem smjeru. 
+#Podaci su grupirani na početku, ali nema očite veze između njih, dok s vremenskom odmakom ikakva povezanost iščezava.
+
+>>>Prikaži distribuciju GT indikatora za recesiju, što zaključuješ?
+
+plt.style.use("classic")
+
+plt.hist(data["recesija"],bins=5,range=[0,100])
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Distribucija popularnosti pojma recesija")
+
+plt.show()
+plt.close()
+
+#Iz histograma možemo uočiti da je popularnost pretraživanja pojma recesija najveća u razdoblju od 2010. do 2012., a nakon toga znatno pada.
+
+>>>Definiraj novi indikator kao omjer GT indikatora recesija i inflacija. Prikaži ga grafički i izračunaj deskriptivnu analizu. Što zaključuješ?
+
+#novi inidikator
+data["ratio"]=data["recesija"]/data["inflacija"]*100
+print(data)
+
+#grafički prikaz
+plt.plot(data.loc[:,"ratio"], label=data.columns[4])
+
+plt.xlabel("Mjeseci")
+plt.ylabel("Indeks")
+plt.title("Google Trends podaci")
+#plt.yticks([0,25,50,75,100])
+#plt.grid(True)
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+#deskriptivna
+ratio=data["recesija"]/data["inflacija"]*100
+descriptives = ratio.describe()
+
+print(descriptives)
+
+#Prosječna vrijednost omjera iznosi 115,47 - recesija je u prosjeku popularnija od inflacije kao pojam pretraživanja.
+#Standardna devijacija iznosi 517,46 - velika varijabilnost 
+#Prvih 50% podataka o iznosu omjera ima vrijednost 38,09 i manje, dok ostalih 50% podataka ima vrijednost 38,09 i više. - inflacija bi onda bila popularna
+#možemo pretpostaviti da imamo outliere koji jako utječu na prosjek i iskrivljavaju sliku o popularnosti pretraživanja.
+
+
+
+
+
+
+
+
 
 
 
