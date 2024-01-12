@@ -164,6 +164,13 @@ def maksimum_po_stupcima(G):
 rezultat = maksimum_po_stupcima(G)
 print("Maksimumi po stupcima su:", rezultat)
 
+#Zadatak 5. Učitaj podatke iz csv GTzadaci.csv. U dokumentu se nalaze tri Google Trends niza koji prikazuju popularnost pojmova: financije, inflacija i recesija te Indeks pouzdanja potrošača (Consumer Confidence Index, CCI).
+Google Trends podaci se interpretiraju kao popularnost pretraživanja pojma, dok CCI odražava pouzdanje. 
+Svi podaci su izračunani za Hrvatsku za period 01/2020 - 11/2023. Riješi sljedeće zadatke:
+>>>Objasni značenje index_col=0 i parse_dates=True.
+
+
+
 
 
 
