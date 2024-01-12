@@ -1,0 +1,307 @@
+#imamo neku distribuciju za koju kažemo da je normalna
+#očekivana vrijednost=prosjek, a standardna devijacija=st.devijacija i to su parametri distribucije
+#95.percentil računamo po formuli Z*s+x(x je prosjek, a s stand.devijacija)
+
+>>>#Primjer 1A: Generiraj DataFrame koji sadrži uzorak iz N(100,5) veličine 100. Prvih 10 mjesta u podacima povećaj za 3 st.dev., a drugih 10 smanji za 3 st.dev.Nacrtaj histogram.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+mu=100
+sigma=5
+
+n=100
+
+np.random.seed(seed=1)
+data=pd.DataFrame(np.random.normal(mu,sigma,size=(n,1)),columns=["A"])
+
+#print(data)
+
+data.iloc[0:10,0]=data.iloc[0:10,0]+3*sigma
+data.iloc[10:20,0]=data.iloc[10:20,0]-3*sigma
+
+plt.hist(data["A"],label=data.columns)
+
+plt.show()
+plt.close()
+
+>>>#Primjer 1B: Procijeni prosjek i standardnu devijaciju na dva načina: a) na svim podacima, b) na 10% trimmanim podacima.
+
+m1=np.mean(data.values)
+s1=np.std(data.values)
+#print(m1,s1)
+
+trim=10
+
+p=trim//2
+data["B"] = data["A"].sort_values()
+
+m2=np.mean(data.iloc[p:(100-p),1])
+s2=np.std(data.iloc[p:(100-p),1])
+
+#print(m2,s2)
+
+print("Teorijski DGP, mu=",mu,"sigma=",sigma)
+print("Full sample DGP, mu=",m1,"sigma=",s1)
+print("Trimm DGP, mu=",m2,"sigma=",s2)
+
+#kad mičemo outliere smanjit će se standardna devijacija ako su oni stvarno outlieri
+
+>>>#Prikažite grafički te na histogram dodajte procijenjene distribucije (normalne).
+
+plt.hist(data["A"], density=True, alpha=0.5, color='b', edgecolor='black',label="A") #density=true znači da je površina histograma=1
+
+# Overlay the probability density function (PDF) for a normal distribution
+xmin, xmax = plt.xlim()
+x = np.linspace(xmin, xmax, 100) #točke na x osi koje idu od xmin do xmax
+
+pdf0 = (1 / (np.sqrt(2 * np.pi) * 5)) * np.exp(-(x - mu)**2 / (2 * sigma**2))  #formula za krivulju distribucije, teorijska DGP
+pdf1 = (1 / (np.sqrt(2 * np.pi) * s1)) * np.exp(-(x - m1)**2 / (2 * s1**2))    #full sample
+pdf2 = (1 / (np.sqrt(2 * np.pi) * s2)) * np.exp(-(x - m2)**2 / (2 * s2**2))    #trimmano
+
+plt.plot(x, pdf0, 'k', linewidth=1,label="DGP")
+plt.plot(x, pdf1, 'k', linewidth=1,ls=":",label="full")
+plt.plot(x, pdf2, 'k', linewidth=1,ls="--", label="trimm")
+
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+>>>#Primjer 1C: Odaberi DGP i procijeni 95. percentil distribucije.
+
+data_norm = np.random.normal(m1, s1, 1000)
+
+# Calculate the 95th percentile using np.percentile
+percentile_95 = np.percentile(data_norm, 95)
+
+print("Teorijski:", 1.645*sigma+mu)
+print("Procjena na temelju DGP-a:", 1.645*s1+m1)
+print("Procjena na jednom uzorku:", percentile_95)
+
+# Ovaj put je postojao i teorijski način kako da odredimo 95. percentil, ali općenito ne treba postojati - simulacije.
+
+#Simulacije, bootstrapping - generiramo uzorke, za njih računamo 95.percentil i uzmemo prosjek svih 95.tih percentila za sve uzorke
+nrep=100 #broj ponavljanja 
+k=1000 #veličina uzorka 
+
+p95_sim = np.full(nrep, np.nan)
+
+for i in range(nrep):            
+    data_norm = np.random.normal(m1, s1, 1000)
+    p95_sim[i] = np.percentile(data_norm, 95)
+
+print("Teorijski:", 1.645*sigma+mu)
+print("Procjena na temelju DGP-a:", 1.645*s1+m1) #dobiveno na temelju teorije pa onda ovaj broj i eksperimentalni trebaju biti jako blizu
+print("Eksperimentalni - simulacije:", np.mean(p95_sim))
+
+
+#BOOTSTRAPPING
+for i in range(nrep):
+
+sample=random.choices(data, k=k)
+
+
+>>>#Primjer 2A: Generiraj uzorak s ponavljanjem i bez ponavljanja veličine k=15 iz {0,1,...,14}.
+
+#uzorkovanje bez ponavljanja
+import random
+
+# Create a population of items
+population = range(0,15)
+
+# Specify the sample size
+k = 15
+
+# Generate a sample without replacement
+#np.random.seed(seed=None)
+sample1 = random.sample(population, k)
+
+print(sample1)
+#sadrži 15 članova koji se ne ponavljaju, imamo jedan uzorak
+
+#uzorkovanje s ponavljanjem
+# Generate a sample with replacement
+sample2 = random.choices(population, k=k)
+print(sample2)
+
+>>>#Primjer 2B: Generirajte 3 uzorka s ponavljanjem i 3 bez. Što primjećujete?
+
+#bez ponavljanja
+sample1 = random.sample(population, k)
+sample2 = random.sample(population, k)
+sample3 = random.sample(population, k)
+
+print("Bez ponavljanja")
+print("Prvi uzorak",np.sort(sample1))
+print("Drugi uzorak",np.sort(sample2))
+print("Treci uzorak",np.sort(sample3))
+
+
+#s ponavljanjem
+sample1 = random.choices(population, k=k)
+sample2 = random.choices(population, k=k)
+sample3 = random.choices(population, k=k)
+
+print("S ponavljanjem")
+print("Prvi uzorak",np.sort(sample1))
+print("Drugi uzorak",np.sort(sample2))
+print("Treci uzorak",np.sort(sample3))
+
+>>>#Primjer 3A: Iz podataka u Primjeru 1 (data["A"]), generirajte nrep=100 uzoraka s ponavljanjem veličine k=50. Izračunaj 95.percentil za svaki uzorak.
+
+nrep=100
+k=50
+
+p95 = np.full(nrep, np.nan) #bit će tolko vrijednosti koliko imamo nrep
+
+#print(p95)
+
+sample=random.choices(data["A"].values, k=k)
+plt.hist(sample, density=True, alpha=0.5, color='y', edgecolor='black',label="sample")
+plt.show()
+plt.close()
+
+mport random
+
+for i in range(nrep):            
+    sample=random.choices(data["A"].values, k=k)
+    p95[i] = np.percentile(sample, 95)
+
+print(p95)
+
+>>>#Primjer 3B: Procijeni 95. percentil na temelju bootstrapped uzoraka i usporedi s prethodnim izračunima:
+
+print("Podaci su generirani iz N(",mu,",",sigma,"), no 20% podataka smo izmijenili")
+print("Teorijski:", 1.645*sigma+mu)
+print("Uzorak:", np.percentile(data["A"], 95))
+print("Eksperimentalni (procijenjen DGP):", 1.645*s1+m1)
+print("Eksperimentalni simulacije (procijenjen DGP):", np.mean(p95_sim))
+print("Bootstrap (prosjek):", np.mean(p95))
+print("Bootstrap (medijan):", np.median(p95))
+
+#podaci su jako slični jer naši podaci dolaze iz normalne distribucije i nisu toliko udaljeni od nje
+#također trimmali smo samo 10% podataka 
+
+>>>#Primjer 4: Ponovite Primjer 1 i Primjer 3 bez intervencija u podatke, te usporedite teorijsku vrijednost s izračunanima.
+
+mu=100
+sigma=5
+
+n=100
+
+np.random.seed(seed=1)
+data=pd.DataFrame(np.random.normal(mu,sigma,size=(n,1)),columns=["A"])
+#nema intervencije na dataset
+
+#DGP
+m1=np.mean(data.values)
+s1=np.std(data.values)
+
+#Simulacije
+nrep=100
+k=1000
+
+p95_sim = np.full(nrep, np.nan)
+
+for i in range(nrep):            
+    data_norm = np.random.normal(m1, s1, 1000)
+    p95_sim[i] = np.percentile(data_norm, 95)
+
+#Bootstrap
+nrep=100
+k=50
+p95 = np.full(nrep, np.nan)
+for i in range(nrep):            
+    sample=random.choices(data["A"].values, k=k)
+    p95[i] = np.percentile(sample, 95)
+
+print("Podaci su generirani iz N(",mu,",",sigma,") bez intervencija na podatke")
+print("Teorijski DGP:", 1.645*sigma+mu)
+
+print("Uzorak:", np.percentile(data["A"], 95))
+
+print("Eksperimentalni (procijenjen DGP):", 1.645*s1+m1)
+print("Eksperimentalni (procijenjen DGP,simulacije):", np.mean(p95_sim))
+
+print("Bootstrap (prosjek):", np.mean(p95))
+
+
+>>>#Primjer 5: Na podacima iz Primjera 1 istražite rezultat jackknife procedure.
+
+#tehnika kojom gledamo postoji li outlier 
+#testira je li model robustan na određena izbacivanja
+
+mu=100
+sigma=5
+
+n=100
+
+np.random.seed(seed=1)
+data=pd.DataFrame(np.random.normal(mu,sigma,size=(n,1)),columns=["A"])
+data.iloc[0:10,0]=data.iloc[0:10,0]+3*sigma
+data.iloc[10:20,0]=data.iloc[10:20,0]-3*sigma
+
+p95_jack = np.full(n, np.nan)
+
+for i in range(n):
+    jack_data = np.concatenate([data.iloc[0:i,0].values, data.iloc[i+1:,0].values])
+    p95_jack[i]=np.percentile(jack_data, 95)
+
+
+print("95.percentil podataka",np.percentile(data.iloc[:,0],95))
+print("Jackknife izračun", np.mean(p95_jack))
+print("Jackknife pristranost", (n-1)*(np.mean(p95_jack)-np.percentile(data.iloc[:,0],95)))
+
+#jackknife pristranost gleda razliku između stvarne procjene i procjene nastale jackknife metodom
+#u ovom slučaju ona je pozitivna - originalna procjena je overestimation
+
+# Više opcija u jackknife modulu koji se nalazi u scipy.stats library.
+#nema velike razlike jer nema outliera
+
+>>>#Primjer 6.(Primjer 13. od prošli put): Izračunaj krosvalidaciju za model koji sadrži prvih pet GT indikatora.
+
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LinearRegression
+import numpy as np
+data = pd.read_csv('GTpodaci.csv', header=0, index_col=0,parse_dates=True)
+y = data.iloc[:, 299].values.reshape(-1, 1)
+
+# Create a linear regression model
+model = LinearRegression()
+
+linear_regressor = LinearRegression() 
+
+X = data.iloc[:, 0:5].values.reshape(-1, 5)  
+
+linear_regressor.fit(X, y)  # perform linear regression
+Y_pred = linear_regressor.predict(X)  # make predictions
+Y_hat = Y_pred.reshape(-1, 1)  
+
+MSE=np.mean(((y-Y_hat)**2))
+
+# Perform k-fold cross-validation (e.g., k=5)
+cv_scores = cross_val_score(model, X, y, cv=5, scoring='neg_mean_squared_error')
+
+# Note: neg_mean_squared_error is used because scikit-learn's convention is maximizing scores, and we want to minimize the mean squared error.
+
+# Pazimo na to da sve minimiziramo (zato dodani minusi)
+print("MSE:", MSE)
+print("Cross-Validation Scores:", -cv_scores)
+print("Mean Cross-Validation Score:", -np.mean(cv_scores))
+
+#Što dalje? Ovi rezultati nam ukazuju na kojim podacima model najlošije performa - COVID19
+
+#k=5 jer sadrži prvih pet indikatora
+#cross-validation scores nam u ovom slučaju pokazuju MSE za različite dijelove podataka
+#MSE je najveći u zadnjem dijelu zbog COVID-a
+
+
+
+
+
+
+
+
+
