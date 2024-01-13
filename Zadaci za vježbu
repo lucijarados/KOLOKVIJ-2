@@ -292,7 +292,196 @@ print(descriptives)
 #možemo pretpostaviti da imamo outliere koji jako utječu na prosjek i iskrivljavaju sliku o popularnosti pretraživanja.
 
 
+#Zadatak 6. Učitaj podatke iz csv GTzadaci.csv. Riješi sljedeće zadatke:
+>>>Izračunajte stopu promjene za GT indikatore po formuli gt=lnGTt-lnGTt-12*100. (Uputa: prethodno korigiraj 0 u 1 zbog logaritma.)
 
+# Change elements equal to 0 to 1
+data[data.values == 0] = 1
+
+# Calculate natural logarithm for all columns except the last one
+log_data = np.log(data.iloc[:, :-1])
+
+# Create 'delta_log' DataFrame filled with NaN values for all columns except the last one
+delta_log = pd.DataFrame(np.nan, index=log_data.index, columns=log_data.columns)
+
+[m, n] = log_data.shape  # m - number of rows, n - number of columns
+
+# Calculate rate of change for natural logarithm for all columns except the last one between time t and time t-12
+for j in range(n):
+    for i in range(12, m):
+        delta_log.iloc[i, j] = log_data.iloc[i, j] - log_data.iloc[i - 12, j]
+
+# Print the result
+print("Rate of change for natural logarithm for all columns except the last one between time t and time t-12:")
+print(delta_log.iloc[12:, :])  # Skip the first 12 rows with NaN values
+
+>>>Izračunajte diferenciju promjene za CCI indikator po formuli deltaCCIt=CCIt-CCIt-12.
+
+delta_last_column = pd.DataFrame(np.nan, index=data.index, columns=[data.columns[-1]])
+
+[m, n] = data.shape  # m - number of rows, n - number of columns
+
+# Calculate differences for the last column between time t and time t-12
+delta_last_column.iloc[12:, 0] = data.iloc[12:, -1].values - data.iloc[:-12, -1].values
+
+# Print the result
+print("Differences for the last column between time t and time t-12:")
+delta_last_column.rename(columns={'CCI': 'deltaCCI'}, inplace=True)
+print(delta_last_column)
+
+#dodat ćemo deltaCCI postojećem dataframeu "data"
+data = pd.concat([data, delta_last_column], axis=1)
+print(data)
+
+>>>Procijeni regresijski model i napiši regresijsku jednadžbu. deltaCCIt=ß0 + ß1gt,recesija + et
+
+#slope je ß1
+#intercept je ß0
+
+import numpy as np #izračuni
+import pandas as pd #učitavanje data framea
+import matplotlib.pyplot as plt #vizualizacija
+from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
+
+
+# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
+
+X = data.iloc[:, 2].values.reshape(-1, 1)  
+Y = data.iloc[:, 4].values.reshape(-1, 1) 
+# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
+
+#stvara objekt za linearnu regresiju
+linear_regressor = LinearRegression()  
+
+linear_regressor.fit(X, Y)  # perform linear regression
+Y_pred = linear_regressor.predict(X)  # make predictions
+
+from sklearn import metrics
+  
+# printing values 
+print('Slope:' ,linear_regressor.coef_) 
+print('Intercept:', linear_regressor.intercept_) 
+
+deltaCCIt=2,75 - 0,14gt,recesija
+
+#fali greška relacije
+
+>>> Izračunaj regresijske vrijednosti te ih ucrtaj na dijagram rasipanja. Što zaključuješ?
+
+plt.scatter(X, Y)
+plt.show()
+
+#dijagram rasipanja?? 
+
+>>>Ocijeni fit prethodnog modela tako da koristiš barem dva različita indikatora. Što zaključuješ?
+
+rmse = np.sqrt(mse) 
+r2 = metrics.r2_score(Y, Y_pred) 
+print("RMSE",rmse)
+print("R2", r2)
+
+RMSE 9.41015937928068
+R2 0.030726273351731392
+
+#Budući da je koeficijent determinacije samo 3% zaključujemo da je ovaj model iznimno loš za prikazivanje podataka.
+
+>>>Procijeni model pomoću statsmodels.api libraryija. Komentiraj rezultate testa značajnosti nezavisnih varijabli.
+
+import statsmodels.api as sm
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+
+#p-vrijednost=0,023
+#ako je alfa=5%, donosimo p-vrijednost je manja od alfa, odbacujemo nultu hipotezu i zaključujemo da je varijabla gt,recesija statistički značajna u modelu
+
+#Zadatak 7.  Koristeći podatke definirane u Zadatku 6 izračunaj sljedeće zadatke:
+>>> Procijeni linerni regresijski model kao prvi samo su nam svi gt indikatori nezavisne varijable te napiši procijenjenu jednadžbu.
+
+
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# Assuming 'data' is your DataFrame
+X = data[['financije', 'recesija', 'inflacija']]  # Assuming 'X1', 'X2', 'X3' are your column names
+Y = data['deltaCCI']
+
+# Create a Linear Regression model
+linear_regressor = LinearRegression()
+
+# Fit the model
+linear_regressor.fit(X, Y)
+
+# Print the coefficients and intercept
+print('Coefficients:', linear_regressor.coef_)
+print('Intercept:', linear_regressor.intercept_)
+
+# Predict using the trained model
+Y_pred = linear_regressor.predict(X)
+
+Coefficients: [ 0.07336261 -0.14353814 -0.1335101 ]
+Intercept: 0.8801216152762595
+
+deltaCCIt=0,88 + 0,07gt,financije - 0,14gt,recesija - 0,13gt,inflacija
+
+>>>Procijeni model pomoću statsmodels.api libraryija. Komentiraj rezultate testa značajnosti nezavisnih varijabli.
+
+import statsmodels.api as sm
+
+# Assuming 'data' is your DataFrame with multiple independent variables (X1, X2, X3, ...)
+# and a dependent variable 'Y'
+X = data[['financije', 'recesija', 'inflacija']]  # Include all independent variables
+Y = data['deltaCCI']
+
+# Add a constant term to the independent variables
+X0 = sm.add_constant(X)
+
+# Fit the OLS regression model
+reg_a = sm.OLS(Y, X0).fit()
+
+# Display the summary tistics
+print(reg_a.summary())
+
+#Usporedbom p-vrijednosti i alfa na 5%, recesija i inflacija su statistički značajne u modelu, dok financije nisu. 
+
+>>> Ocijeni fit prethodnog modela tako da koristiš barem dva različita indikatora. Što zaključuješ?
+
+#ne vrtimo dodatni kod jer u prethodnom imamo sve izračunato
+
+====
+Dep. Variable:               deltaCCI   R-squared:                       0.116
+Model:                            OLS   Adj. R-squared:                  0.099
+Method:                 Least Squares   F-statistic:                     7.106
+Date:                Sat, 13 Jan 2024   Prob (F-statistic):           0.000162
+Time:                        12:32:00   Log-Likelihood:                -578.29
+No. Observations:                 167   AIC:                             1165.
+Df Residuals:                     163   BIC:                             1177.
+
+
+#koeficijent determinacije samo 11,6%, AIC i BIC relativno veliki, znači da je model loš.
+
+>>> Usporedi fit prethodnog modela i modela iz Zadatka 5 tako da koristiš barem dva različita indikatora. Što zaključuješ?
+
+#ispis za model iz prošlog zadatka
+R-squared:	0.031
+Adj. R-squared:	0.025
+AIC:	1176.
+BIC:	1182.
+
+#Koeficijent determinacije nije baš mjerodavan za usporedbu jer smo u ovaj model dodali više varijabli pa ćemo gledati korigirani.
+#Za 1. model je korigirani R2=0,025, a za 2. model=0,099, iz čega zaključujemo da je 2. model bolji jer je korigirani R2 veći.
+#ako uspoređujemo informacijske kriterije, AIC za 1. model=1176, a za 2. model=1165 -> 2. model je bolji
+#BIC za 1. model=1182, a za 2. model=1177 -> 2. model je bolji
+#možemo pogledati još i RMSE, za 1. model RMSE 9.41015937928068, a za 2. model RMSE 7.720564273447207 -> 2. model je bolji jer je RMSE manji
+
+
+#da izračunamo RMSE za 2. model (ubacili smo u dio koda gdje smo procijenili regresiju)
+RMSE=np.sqrt(np.mean(((Y-Y_pred)**2))) #prosječno kvadratno odstupanje 
+print(RMSE)
 
 
 
