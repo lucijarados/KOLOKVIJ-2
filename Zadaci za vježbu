@@ -484,14 +484,599 @@ RMSE=np.sqrt(np.mean(((Y-Y_pred)**2))) #prosječno kvadratno odstupanje
 print(RMSE)
 
 
+>>>Zadatak 8.: Procijeni tri modela jednostavne linearne regresije gdje je y=CCI, a x=jedna od GT varijabli. Usporedi modele i odaberi finalni model. (Uputa: Potrebno je obrazložiti svaku odluku.
+Ovaj zadatak može se riješiti na više načina s različitim rješenjima, no važno je da je vaš slijed zaključivanja logičan.)
+
+#1. model x=gt, financije
+
+import numpy as np #izračuni
+import pandas as pd #učitavanje data framea
+import matplotlib.pyplot as plt #vizualizacija
+from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
 
 
+# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
+
+X = data.iloc[:, 0].values.reshape(-1, 1)  
+Y = data.iloc[:, 3].values.reshape(-1, 1) 
+# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
+
+#stvara objekt za linearnu regresiju
+linear_regressor = LinearRegression()  
+
+linear_regressor.fit(X, Y)  # perform linear regression
+Y_pred = linear_regressor.predict(X)  # make predictions
+
+from sklearn import metrics
+  
+# printing values 
+print('Slope financije:' ,linear_regressor.coef_) 
+print('Intercept financije:', linear_regressor.intercept_) 
 
 
+#1. model
+
+import statsmodels.api as sm
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+#########################
+#2. model x=gt, inflacija
+
+import numpy as np #izračuni
+import pandas as pd #učitavanje data framea
+import matplotlib.pyplot as plt #vizualizacija
+from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
 
 
+# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
+
+X = data.iloc[:, 1].values.reshape(-1, 1)  
+Y = data.iloc[:, 3].values.reshape(-1, 1) 
+# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
+
+#stvara objekt za linearnu regresiju
+linear_regressor = LinearRegression()  
+
+linear_regressor.fit(X, Y)  # perform linear regression
+Y_pred = linear_regressor.predict(X)  # make predictions
+
+from sklearn import metrics
+  
+# printing values 
+print('Slope inflacija:' ,linear_regressor.coef_) 
+print('Intercept inflacija:', linear_regressor.intercept_) 
+
+#2. model
+
+import statsmodels.api as sm
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+#########################
+#3. model x=gt, recesija
+
+import numpy as np #izračuni
+import pandas as pd #učitavanje data framea
+import matplotlib.pyplot as plt #vizualizacija
+from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
 
 
+# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
+
+X = data.iloc[:, 2].values.reshape(-1, 1)  
+Y = data.iloc[:, 3].values.reshape(-1, 1) 
+# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
+
+#stvara objekt za linearnu regresiju
+linear_regressor = LinearRegression()  
+
+linear_regressor.fit(X, Y)  # perform linear regression
+Y_pred = linear_regressor.predict(X)  # make predictions
+
+from sklearn import metrics
+  
+# printing values 
+print('Slope recesija:' ,linear_regressor.coef_) 
+print('Intercept recesija:', linear_regressor.intercept_) 
+
+#3. model
+
+import statsmodels.api as sm
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+###################################################
+
+#ovo smo dodali svuda u izračun regresije
+RMSE=np.sqrt(np.mean(((Y-Y_pred)**2))) #prosječno kvadratno odstupanje 
+print("RMSE3",RMSE)
+
+####################################################
+
+#jednadžba 1. modela: CCIt=-7,55 - 0,21gt,financije
+#jednadžba 2. modela: CCIt=-18,83 - 0,09gt,inflacija
+#jednadžba 3. modela: CCIt=-15,25 - 0,51gt,recesija
+
+
+model 1                 model 2              model 3 
+
+R2=0,097                R2=0,013             R2=0,243
+R2adj=0,091             R2adj=0,007          R2adj=0,239
+AIC=1256                AIC=1271             AIC=1227
+BIC=1263                BIC=1277             BIC=1233
+RMSE1 10.28             RMSE2 10.75          RMSE3 9.41
+
+#po svim kriterijima, model 3 je najbolji - najveći R2 i R2adj, najmanji informacijski kriteriji i najmanji RMSE
+#sljedeći "najbolji" je model 1 i zatim model 2, iako su oba zapravo dosta loša
+#iako je model 3 najbolji od ovih navedenih, on i dalje nije idealan budući da ima dosta nizak koeficijent determinacije pa ne objašnjava najbolje zavisnu varijablu
+
+>>>Zadatak 9: Između modela koji sadrže dvije nezavisne varijable (GT indikatore) i y=CCI odaberi najbolji. Obrazloži zaključivanje.
+
+import pandas as pd
+import statsmodels.api as sm
+from itertools import combinations
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+# Assuming your data is stored in a DataFrame called 'df'
+# Make sure to replace 'YourDataFrame' with the actual name of your DataFrame
+
+# Extract the column names of potential independent variables
+independent_vars = ['financije', 'inflacija', 'recesija']
+
+# CCI is the dependent variable
+dependent_var = 'CCI'
+
+# Initialize an empty list to store regression results and RMSE
+results = []
+
+# Iterate through all combinations of 2 independent variables
+for combo in combinations(independent_vars, 2):
+    # Extract the current combination
+    current_vars = list(combo)
+
+    # Prepare the independent variables
+    X = data[current_vars]
+
+    # Add a constant term to the independent variables matrix
+    X = sm.add_constant(X)
+
+    # CCI is the dependent variable
+    y = data[dependent_var]
+
+    # Fit the linear regression model
+    model = sm.OLS(y, X).fit()
+
+    # Make predictions
+    y_pred = model.predict(X)
+
+    # Calculate RMSE
+    rmse = np.sqrt(mean_squared_error(y, y_pred))
+
+    # Store the results in the list
+    results.append({'Independent Variables': current_vars, 'Model': model, 'RMSE': rmse})
+
+# Print the regression results and RMSE for each combination
+for result in results:
+    print(f"Independent Variables: {result['Independent Variables']}")
+    print(result['Model'].summary())
+    print(f"RMSE: {result['RMSE']}")
+    print("\n" + "="*50 + "\n")
+#treba li i promijeniti redoslijed varijablama u kombinaciji?
+
+#############################################################################
+Independent Variables: ['financije', 'inflacija']
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                    CCI   R-squared:                       0.122
+Model:                            OLS   Adj. R-squared:                  0.111
+Method:                 Least Squares   F-statistic:                     11.37
+Date:                Sat, 13 Jan 2024   Prob (F-statistic):           2.38e-05
+Time:                        15:58:56   Log-Likelihood:                -623.79
+No. Observations:                 167   AIC:                             1254.
+Df Residuals:                     164   BIC:                             1263.
+Df Model:                           2                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         -4.1612      3.534     -1.178      0.241     -11.139       2.817
+financije     -0.2204      0.049     -4.506      0.000      -0.317      -0.124
+inflacija     -0.1208      0.056     -2.165      0.032      -0.231      -0.011
+==============================================================================
+Omnibus:                       26.329   Durbin-Watson:                   0.271
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):                7.023
+Skew:                          -0.081   Prob(JB):                       0.0299
+Kurtosis:                       2.009   Cond. No.                         305.
+==============================================================================
+RMSE: 10.138307432100575
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+==================================================
+
+Independent Variables: ['financije', 'recesija']
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                    CCI   R-squared:                       0.285
+Model:                            OLS   Adj. R-squared:                  0.277
+Method:                 Least Squares   F-statistic:                     32.76
+Date:                Sat, 13 Jan 2024   Prob (F-statistic):           1.07e-12
+Time:                        15:58:56   Log-Likelihood:                -606.56
+No. Observations:                 167   AIC:                             1219.
+Df Residuals:                     164   BIC:                             1228.
+Df Model:                           2                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         -6.9339      2.860     -2.424      0.016     -12.581      -1.287
+financije     -0.1394      0.045     -3.108      0.002      -0.228      -0.051
+recesija      -0.4629      0.070     -6.583      0.000      -0.602      -0.324
+==============================================================================
+Omnibus:                        1.802   Durbin-Watson:                   0.389
+Prob(Omnibus):                  0.406   Jarque-Bera (JB):                1.838
+Skew:                           0.245   Prob(JB):                        0.399
+Kurtosis:                       2.843   Cond. No.                         266.
+==============================================================================
+RMSE: 9.144618127355317
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+==================================================
+
+Independent Variables: ['inflacija', 'recesija']
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                    CCI   R-squared:                       0.247
+Model:                            OLS   Adj. R-squared:                  0.238
+Method:                 Least Squares   F-statistic:                     26.88
+Date:                Sat, 13 Jan 2024   Prob (F-statistic):           7.98e-11
+Time:                        15:58:56   Log-Likelihood:                -610.95
+No. Observations:                 167   AIC:                             1228.
+Df Residuals:                     164   BIC:                             1237.
+Df Model:                           2                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const        -14.4047      1.416    -10.169      0.000     -17.202     -11.608
+inflacija     -0.0452      0.052     -0.878      0.381      -0.147       0.056
+recesija      -0.5051      0.071     -7.137      0.000      -0.645      -0.365
+==============================================================================
+Omnibus:                        0.927   Durbin-Watson:                   0.308
+Prob(Omnibus):                  0.629   Jarque-Bera (JB):                0.932
+Skew:                           0.176   Prob(JB):                        0.627
+Kurtosis:                       2.903   Cond. No.                         52.0
+==============================================================================
+RMSE: 9.388140942076822
+
+#############################################################################
+
+#uspoređivali smo R2, R2adj, AIC, BIC i RMSE
+#možemo zaključiti da je model 2 najbolji, tj. onaj u kojem je x1=financije, a x2=recesija - najveći R2 i R2adj, najmanji BIC i AIC, najmanji RMSE
+#jednadžba tog modela: CCIt=-6,93 - 0,14gt,financije - 0,46gt,recesija
+
+>>>Zadatak 10: Koji indikator se može koristiti za uspoređivanje modela u Zadatku 8 i Zadatku 9? Obrazloži. 
+(Uputa: Navedi barem jedan indikator.)
+
+#Da bismo međusobno uspoređivali modele iz zadatka 8 i zadatka 9 možemo koristiti korigirani koeficijent determinacije, jer on nije osjetljiv na povećanje broja
+varijabli u modelu kao koeficijent determinacije. Nadalje, možemo koristiti RMSE ili informacijske kriterije koji su bazirani na vjerodostojnosti. 
+
+>>>Zadatak 11: Procijeni tri modela jednostavne linearne regresije gdje je y=CCI, a x=jedna od GT varijabli. Odaberi optimalni model pomoću korigiranog 
+R2 i AIC. Razlikuju li se odluke?
+
+#te smo modele već procijenili u Zad.8. pa ćemo samo prekopirati rezultate
+
+model 1                 model 2              model 3 
+
+R2=0,097                R2=0,013             R2=0,243
+R2adj=0,091             R2adj=0,007          R2adj=0,239
+AIC=1256                AIC=1271             AIC=1227
+BIC=1263                BIC=1277             BIC=1233
+RMSE1 10.28             RMSE2 10.75          RMSE3 9.41
+
+#po R2adj, model 3 je najbolji model
+#po AIC je model 3 također najbolji 
+#u modelu 3 je nezavisna varijabla recesija
+
+>>>Zadatak 12:Procijeni tri modela jednostavne linearne regresije gdje je y=CCI, a u prvom modelu x=GT(financije), u drugom x=GT(financije) i GT(recesija) a u trećem x=GT(financije), GT(recesija) i GT(inflacija). 
+Odaberi optimalni model pomoću korigiranog 
+koeficijenta determinacije i AIC. Obrazloži zaključivanje. Razlikuju li se odluke?
+
+#jednostavna regresija treba imati jednu nezavisnu varijablu??
+
+#prethodna 2 smo već procijenili, samo moramo 3.
+
+import statsmodels.api as sm
+
+# Assuming 'data' is your DataFrame with multiple independent variables (X1, X2, X3, ...)
+# and a dependent variable 'Y'
+X = data[['financije', 'recesija', 'inflacija']]  # Include all independent variables
+Y = data['deltaCCI']
+
+# Add a constant term to the independent variables
+X0 = sm.add_constant(X)
+
+# Fit the OLS regression model
+reg_a = sm.OLS(Y, X0).fit()
+
+# Display the summary tistics
+print(reg_a.summary())
+
+#######################################
+
+model 1               model 2             model 3
+R2adj=0,091           R2adj=0,277         R2adj=0,282
+AIC=1256              AIC=1219            AIC=1219
+
+#po korigiranom koeficijentu determinacije, odabrali bi model 3
+#po AIC ne bismo mogli donijeti odluku, tj. indiferentni smo na odabir modela 2 ili modela 3
+
+>>>Zadatak 13.:Podijeli podatke tako da training dio zauzima 70% podataka.
+Procijeni tri modela jednostavne linearne regresije gdje je y=CCI, a u prvom modelu x=GT(financije), u drugom x=GT(financije) i GT(recesija) a u trećem x=GT(financije), GT(recesija) i GT(inflacija).
+Odaberi optimalni model na test dijelu podataka pomoću RMSE. Obrazloži zaključivanje.
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+# Assuming your data is stored in a DataFrame called 'df'
+# Make sure to replace 'YourDataFrame' with the actual name of your DataFrame
+
+# Extract the column names of potential independent variables
+independent_vars_1 = ['financije']
+independent_vars_2 = ['financije', 'recesija']
+independent_vars_3 = ['financije', 'recesija', 'inflacija']
+dependent_var = 'CCI'
+
+# Split the data into training and testing sets (70% train, 30% test)
+train_data, test_data = train_test_split(data, test_size=0.3, random_state=42)
+
+# Function to estimate linear regression model and calculate RMSE
+def estimate_model(independent_vars, train_data, test_data):
+    X_train = train_data[independent_vars].values.reshape(-1, len(independent_vars))
+    y_train = train_data[dependent_var].values
+    X_test = test_data[independent_vars].values.reshape(-1, len(independent_vars))
+    y_test = test_data[dependent_var].values
+
+    # Initialize and fit the linear regression model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    # Calculate RMSE
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+
+    return model, rmse
+
+# Estimate three models
+model_1, rmse_1 = estimate_model(independent_vars_1, train_data, test_data)
+model_2, rmse_2 = estimate_model(independent_vars_2, train_data, test_data)
+model_3, rmse_3 = estimate_model(independent_vars_3, train_data, test_data)
+
+# Print the results
+print("Model 1 - Independent Variable: financije")
+print(f"RMSE: {rmse_1}\n")
+
+print("Model 2 - Independent Variables: financije, recesija")
+print(f"RMSE: {rmse_2}\n")
+
+print("Model 3 - Independent Variables: financije, recesija, inflacija")
+print(f"RMSE: {rmse_3}\n")
+
+##########################################################################
+Model 1 - Independent Variable: financije
+RMSE: 11.54
+
+Model 2 - Independent Variables: financije, recesija
+RMSE: 10.08
+
+Model 3 - Independent Variables: financije, recesija, inflacija
+RMSE: 10.27
+
+#na temelju RMSE odabiramo model 2 jer je njegov RMSE najmanji
+
+>>>Zadatak 14: Podijeli podatke tako da training dio zauzima 70% podataka.
+Procijeni tri modela jednostavne linearne regresije gdje je y=CCI, a u prvom modelu x=GT(financije), u drugom x=GT(financije) i GT(recesija) a u trećem x=GT(financije), GT(recesija) i GT(inflacija).
+Odaberi optimalni model na test dijelu podataka pomoću MAE. Obrazloži zaključivanje.
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error
+import numpy as np
+
+# Assuming your data is stored in a DataFrame called 'df'
+# Make sure to replace 'YourDataFrame' with the actual name of your DataFrame
+
+# Extract the column names of potential independent variables
+independent_vars_1 = ['financije']
+independent_vars_2 = ['financije', 'recesija']
+independent_vars_3 = ['financije', 'recesija', 'inflacija']
+dependent_var = 'CCI'
+
+# Split the data into training and testing sets (70% train, 30% test)
+train_data, test_data = train_test_split(data, test_size=0.3, random_state=42)
+
+# Function to estimate linear regression model and calculate MAE
+def estimate_model(independent_vars, train_data, test_data):
+    X_train = train_data[independent_vars].values.reshape(-1, len(independent_vars))
+    y_train = train_data[dependent_var].values
+    X_test = test_data[independent_vars].values.reshape(-1, len(independent_vars))
+    y_test = test_data[dependent_var].values
+
+    # Initialize and fit the linear regression model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    # Calculate MAE
+    mae = mean_absolute_error(y_test, y_pred)
+
+    return model, mae
+
+# Estimate three models
+model_1, mae_1 = estimate_model(independent_vars_1, train_data, test_data)
+model_2, mae_2 = estimate_model(independent_vars_2, train_data, test_data)
+model_3, mae_3 = estimate_model(independent_vars_3, train_data, test_data)
+
+# Print the results
+print("Model 1 - Independent Variable: financije")
+print(f"MAE: {mae_1}\n")
+
+print("Model 2 - Independent Variables: financije, recesija")
+print(f"MAE: {mae_2}\n")
+
+print("Model 3 - Independent Variables: financije, recesija, inflacija")
+print(f"MAE: {mae_3}\n")
+
+#########################################################################
+Model 1 - Independent Variable: financije
+MAE: 9.82803433726367
+
+Model 2 - Independent Variables: financije, recesija
+MAE: 8.408569728320906
+
+Model 3 - Independent Variables: financije, recesija, inflacija
+MAE: 8.670635315847367
+
+#na temelju MAE najbolji je model 2 jer je MAE najmanji
+
+>>>Zadatak 15.: Zadatak 15: Podijeli podatke tako da training dio zauzima 70% podataka. 
+Procijeni tri modela jednostavne linearne regresije gdje je y=CCI, a u prvom modelu x=GT(financije), u drugom x=GT(financije) i GT(recesija) a u trećem x=GT(financije), GT(recesija) i GT(inflacija).
+Odaberi optimalni model na test dijelu podataka pomoću MSE. Obrazloži zaključivanje.
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+# Assuming your data is stored in a DataFrame called 'df'
+# Make sure to replace 'YourDataFrame' with the actual name of your DataFrame
+
+# Extract the column names of potential independent variables
+independent_vars_1 = ['financije']
+independent_vars_2 = ['financije', 'recesija']
+independent_vars_3 = ['financije', 'recesija', 'inflacija']
+dependent_var = 'CCI'
+
+# Split the data into training and testing sets (70% train, 30% test)
+train_data, test_data = train_test_split(data, test_size=0.3, random_state=42)
+
+# Function to estimate linear regression model and calculate MSE
+def estimate_model(independent_vars, train_data, test_data):
+    X_train = train_data[independent_vars].values.reshape(-1, len(independent_vars))
+    y_train = train_data[dependent_var].values
+    X_test = test_data[independent_vars].values.reshape(-1, len(independent_vars))
+    y_test = test_data[dependent_var].values
+
+    # Initialize and fit the linear regression model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    # Calculate MSE
+    mse = mean_squared_error(y_test, y_pred)
+
+    return model, mse
+
+# Estimate three models
+model_1, mse_1 = estimate_model(independent_vars_1, train_data, test_data)
+model_2, mse_2 = estimate_model(independent_vars_2, train_data, test_data)
+model_3, mse_3 = estimate_model(independent_vars_3, train_data, test_data)
+
+# Print the results
+print("Model 1 - Independent Variable: financije")
+print(f"MSE: {mse_1}\n")
+
+print("Model 2 - Independent Variables: financije, recesija")
+print(f"MSE: {mse_2}\n")
+
+print("Model 3 - Independent Variables: financije, recesija, inflacija")
+print(f"MSE: {mse_3}\n")
+
+##########################################################################
+Model 1 - Independent Variable: financije
+MSE: 133.0564799710425
+
+Model 2 - Independent Variables: financije, recesija
+MSE: 101.69324765722348
+
+Model 3 - Independent Variables: financije, recesija, inflacija
+MSE: 105.46172751436197
+
+#prema MSE najbolji je model 2 jer je MSE najmanji
+
+>>>Zadatak 16: Generiraj DataFrame koji sadrži uzorak iz N(1200,50^2) veličine 100. Prvih 10 mjesta u podacima kvadriraj, a drugih 10 kubiraj.
+Nacrtaj histogram.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+mu=1200
+sigma=50
+
+n=100
+
+np.random.seed(seed=1)
+data=pd.DataFrame(np.random.normal(mu,sigma,size=(n,1)),columns=["A"])
+
+data.iloc[0:10,0]=data.iloc[0:10,0]**2
+data.iloc[10:20,0]=data.iloc[10:20,0]**3
+
+plt.hist(data["A"],label=data.columns)
+
+plt.show()
+plt.close()
+
+>>>Pretpostavi da je DGP normalna distribucija i procijeni parametre distribucije. Nacrtaj zajedno histogram i procijenjeni DGP, oznaka pDGP.
+
+m1=np.mean(data.values)
+s1=np.std(data.values)
+
+plt.hist(data["A"], density=True, alpha=0.5, color='b', edgecolor='black',label="A") #density=true znači da je površina histograma=1
+
+# Overlay the probability density function (PDF) for a normal distribution
+xmin, xmax = plt.xlim()
+x = np.linspace(xmin, xmax, 100) #točke na x osi koje idu od xmin do xmax
+
+pdf0 = (1 / (np.sqrt(2 * np.pi) * sigma)) * np.exp(-(x - mu)**2 / (2 * sigma**2))  #formula za krivulju distribucije, teorijska DGP
+pdf1 = (1 / (np.sqrt(2 * np.pi) * s1)) * np.exp(-(x - m1)**2 / (2 * s1**2))    #full sample
+
+plt.plot(x, pdf0, 'k', linewidth=1,label="DGP")
+plt.plot(x, pdf1, 'k', linewidth=1,ls=":",label="pDGP")
+
+
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+>>> Procijeni koeficijent asimetrije pomoću pDGP i pomoću simulacija. Usporedi: koeficijent asimetrije uzorka, koeficijent asimetrije 
+pDGP i koeficijent asimetrije dobiven pomoću simulacija. Objasni rezultate, što zaključuješ iz navedenog?
 
 
 
