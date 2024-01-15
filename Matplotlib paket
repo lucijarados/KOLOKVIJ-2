@@ -178,6 +178,8 @@ delta.iloc[1:m,:]=dat.iloc[1:m,:].values-dat.iloc[0:(m-1),:].values
 
 print(delta.iloc[:,:])
 
+#ovdje smo dobili prvu diferenciju, tj. obična usporedba
+
 #broadcasting
 #Kod oduzimanja dva DataFrame Python radi broadcasting (uparuje retke koji imaju isti naziv) zbog čega dozi do neželjenog outputa.
 Želimo da se oduzimaju vrijednosti pa dodajemo dio .values. Prouči ovaj kratki primjer.
@@ -215,7 +217,7 @@ print(result_with_values)
 
 #Nastavljamo s Primjerom 4. Izračunali smo diferencije pomoću for petlji, oduzimanja matrica, te naravno postoji i već gotova funkcija diff().
 
-delta=dat.diff(periods=1,axis=0)
+delta=dat.diff(periods=1,axis=0)  #idemo po retcima, računamo razliku t - t-1
 
 print(delta.iloc[:,:])
 
@@ -283,6 +285,7 @@ y=np.log(dat)
 # Stopa promjene se uobičajeno računa kao diferencija logaritama
 rate=y.diff(periods=1,axis=0)
 print(rate)
+#print("cijena", rate.iloc[:,0]) 
 
 >>>#Primjer 6.
 # Do sada smo podatke tretirali kao običan DataFrame, no u pythonu možemo precizirati da se radi o vremenskim podacima.
