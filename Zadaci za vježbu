@@ -22,10 +22,10 @@ x=2
 y=5
 z=7
 
-rezultat=np.power(y,x)*np.log10(z)
+rezultat=np.power(y,x)*np.log(z)
 print(rezultat) 
 
-#log računa ln, a log10 računa log
+#log računa ln, a log10 računa log, ali ako ne piše podrazumijeva se da trebamo ln
 
 #Zadatak 3.
 >>>Kreiraj if naredbu koja za zadani broj x ispisuje "Broj nije izdvojenica", ako se nalazi između -3 i 3. U protivnom if naredba ispisuje "Broj je izdvojenica". (Uputa: Na početku zadajte da je 
@@ -55,6 +55,14 @@ for i in brojevi:
         print(True)
     else:
         print(False)
+
+#drugi način
+
+for x in [11, 13, 17, 19]:
+   if(x%10)==(x//10):
+   print("True")
+
+#možemo i samo if x==11, print True
 
 #Zadatak 4. Učitaj paket NumPy pod alisom np te riješi sljedeće zadatke:
 >>>Definiraj matricu nula 4x7, oznaka: A.
@@ -105,16 +113,16 @@ Ispiši prvi element, sedmi element, te predzadnji element.
 E=np.random.random((20,1))
 print(E)
 
-print("1.element", E[0,0])
-print("7.element", E[6,0])
-print("predzadnji element", E[18,0])
+print("1.element", E[0,0]) #ni ne treba nam ova 0
+print("7.element", E[6,0]) #ni ne treba nam ova 0
+print("predzadnji element", E[18,0])  #može i -2
 
 >>>Definiraj matricu F proizvoljnih dimenzija (broj redaka i stupaca je veći od 5) te ispiši parne retke.
 
 F=np.random.random((6,6))
 print(F)
 
-print("\n parni retci", F[1:6:2,:])
+print("\n parni retci", F[1:6:2,:]) #2. redak do 6. retka po 2
 
 >>>Definiraj matricu G proizvoljnih dimenzija (broj redaka i stupaca je veći od 5) te ispiši maksimalni element matrice,
 poziciju maksimalnog elementa te maksimum po stupcima.
@@ -137,6 +145,8 @@ print("Maksimalni element matrice je:", rezultat)
 
 maksimalni_element = G[0][0]
 indeksi_maksimalnog_elementa = (0, 0)
+
+#ima i samo funkcija np.max, puno jednostavnije
 
 #pozicija
 for i, red in enumerate(G):
@@ -169,12 +179,12 @@ Google Trends podaci se interpretiraju kao popularnost pretraživanja pojma, dok
 Svi podaci su izračunani za Hrvatsku za period 01/2020 - 11/2023. Riješi sljedeće zadatke:
 >>>Objasni značenje index_col=0 i parse_dates=True.
 
-#index.col=0 znači da će se prvi stupac podataka iz CSV-a koristiti kao indeks data framea
+#index.col=0 znači da će se prvi stupac podataka iz CSV-a koristiti kao indeks(oznaka) data framea, oznake redaka se nalaze u nultom stupcu
 #parse_dates=True naglašava Pythonu da se radi o vremenskom nizu podataka
 
 >>>Objasni elemente objekta data: columns, index i values.
 
-#columns je oznaka stupca, index je oznaka retka, a values se odnosi na podatke koji su pohranjeni u data frameu
+#columns je oznaka stupca, index je oznaka retka, a values se odnosi na podatke koji su pohranjeni u data frameu(matrica podataka)
 
 >>> Ispiši prvi redak i prvi stupac. Objasni što prikazuju ispisani podaci.
 
@@ -213,6 +223,11 @@ plt.legend(loc='upper left', fontsize='small')
 plt.show()
 plt.close()
 
+#niz je stacionaran
+#povećanje varijabilnosti u vrijeme pandemije
+#prosjek je 0
+#nema sistematičnog kretanja u stopi promjene 
+
 >>> Grafički prikaži sva tri GT indikatora, što zaključuješ?
 
 plt.plot(data, label=data.columns)
@@ -245,6 +260,7 @@ plt.close()
 
 #Iz dijagrama rasipanja možemo uočiti da ne postoji veza između popularnosti pojmova recesija i inflacija ni u kojem smjeru. 
 #Podaci su grupirani na početku, ali nema očite veze između njih, dok s vremenskom odmakom ikakva povezanost iščezava.
+#nema sistematičnog ponašanja
 
 >>>Prikaži distribuciju GT indikatora za recesiju, što zaključuješ?
 
@@ -259,7 +275,7 @@ plt.title("Distribucija popularnosti pojma recesija")
 plt.show()
 plt.close()
 
-#Iz histograma možemo uočiti da je popularnost pretraživanja pojma recesija najveća u razdoblju od 2010. do 2012., a nakon toga znatno pada.
+#iz histograma možemo zaključiti da je najveća frekvencija u razredu 0-20, što znači da pojam recesija nije popularan.
 
 >>>Definiraj novi indikator kao omjer GT indikatora recesija i inflacija. Prikaži ga grafički i izračunaj deskriptivnu analizu. Što zaključuješ?
 
@@ -332,6 +348,8 @@ print(delta_last_column)
 #dodat ćemo deltaCCI postojećem dataframeu "data"
 data = pd.concat([data, delta_last_column], axis=1)
 print(data)
+
+#može samo i diff funkcija
 
 >>>Procijeni regresijski model i napiši regresijsku jednadžbu. deltaCCIt=ß0 + ß1gt,recesija + et
 
@@ -1078,8 +1096,8 @@ plt.close()
 >>> Procijeni koeficijent asimetrije pomoću pDGP i pomoću simulacija. Usporedi: koeficijent asimetrije uzorka, koeficijent asimetrije 
 pDGP i koeficijent asimetrije dobiven pomoću simulacija. Objasni rezultate, što zaključuješ iz navedenog?
 
-
-
+#TEORIJSKA VRIJEDNOST JE 0 ZA KOEFICIJENT ASIMETRIJE
+#PA ONDA RAČUNAMO pomoću simulacija koeficijent asimetrije koji treba ispasti jako blizu 0
 
 
 
