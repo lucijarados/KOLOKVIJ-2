@@ -192,10 +192,10 @@ print("Slicing 3 \n",x[:,0:5:2]) #neparni stupci matrice
 print("Masking \n",x[:,x[0,:]>2])
 
 #fancy indexing (e.g., arr[0, [1, 4]]) 
-print("Fancy index \n",x[0, [1, 4]])      
+print("Fancy index \n",x[0, [1, 4]])    #u prvom retku želim podatke iz 2. i 5. stupca  
       
 #combinations thereof (e.g., arr[:, [1, 5]])
-print("Combination \n",x[:, [1, 4]]) 
+print("Combination \n",x[:, [1, 4]])    #iz svih redaka podatka iz 2. i 5. stupca 
 
 #Primjer 6D
 >>>>>> Zbroji elemente matrice po stupcima i po redcima.
