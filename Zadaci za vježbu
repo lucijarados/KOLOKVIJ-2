@@ -179,7 +179,7 @@ Google Trends podaci se interpretiraju kao popularnost pretraživanja pojma, dok
 Svi podaci su izračunani za Hrvatsku za period 01/2020 - 11/2023. Riješi sljedeće zadatke:
 >>>Objasni značenje index_col=0 i parse_dates=True.
 
-#index.col=0 znači da će se prvi stupac podataka iz CSV-a koristiti kao indeks(oznaka) data framea, oznake redaka se nalaze u nultom stupcu
+#index.col=0 ako želimo da se prvi stupac u dokumentu koristi kao oznaka retka
 #parse_dates=True naglašava Pythonu da se radi o vremenskom nizu podataka
 
 >>>Objasni elemente objekta data: columns, index i values.
