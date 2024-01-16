@@ -638,6 +638,19 @@ RMSE1 10.28             RMSE2 10.75          RMSE3 9.41
 #sljedeći "najbolji" je model 1 i zatim model 2, iako su oba zapravo dosta loša
 #iako je model 3 najbolji od ovih navedenih, on i dalje nije idealan budući da ima dosta nizak koeficijent determinacije pa ne objašnjava najbolje zavisnu varijablu
 
+
+#drugi način
+
+X = data.iloc[:, 0].values.reshape(-1, 1)  # values converts it into a numpy array #u ilocu 0 samo mijenjamo ovisno o tome koji x želimo
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+print("R-Square : ",reg_a.rsquared)
+print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
+print("GT varijabla[",data.columns[0],"], beta : ",reg_a.params[1])
+
+
 >>>Zadatak 9: Između modela koji sadrže dvije nezavisne varijable (GT indikatore) i y=CCI odaberi najbolji. Obrazloži zaključivanje.
 
 import pandas as pd
