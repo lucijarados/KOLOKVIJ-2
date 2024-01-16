@@ -41,6 +41,8 @@ from sklearn.linear_model import LinearRegression #procjene modela, paket: sciki
 
 # Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
 
+#Y je retail, zadnji stupac(300., tj. 299 u pythonu)
+
 Y = data.iloc[:, 299].values.reshape(-1, 1)  
 # -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
 #pišu stvarni podaci
@@ -347,7 +349,7 @@ print("Test sample RMSE:", np.sqrt(np.mean(((y_test-pred1)**2))),np.sqrt(np.mean
 >>>#Primjer 12: Želimo se zadržati unutar modela linearne regresije, kako da kreiramo 5 različitih modela za procjenu retail?
 
 n_model=5
-n_var=15
+n_var=15    #otkud ovaj n_var???
 
 from sklearn.model_selection import train_test_split
 
@@ -406,8 +408,7 @@ cv_scores = cross_val_score(model, X, y, cv=5, scoring='neg_mean_squared_error')
 print("Cross-Validation Scores:", cv_scores)
 print("Mean Cross-Validation Score:", np.mean(cv_scores))
 
-
-
+#ovdje smo računali MSE, znači želimo da on bude minimalan
 
 
 
