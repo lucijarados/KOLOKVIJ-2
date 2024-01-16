@@ -1,3 +1,20 @@
+#funkcijska veza znači da točno možemo izračunati promjenu y uslijed promjene u x
+#slučajna komponenta jednaka je 0
+#vizualno to prepoznajemo tako što sve točke leže na pravcu ili krivulji
+
+#x je neslučajna varijabla jer ju zadajemo i onda promatramo kako ona utječe na y
+#x je egzogen, a y endogen
+
+#funkcija cilja-promatramo udaljenost točkice(stvarna) od pravca(regresijske vrijednosti)
+#kvadriramo da poništimo pozitivne i negativne vrijednosti
+#kad imamo puno podataka ne moramo brinuti o normalnosti distribucije 
+
+#kad preuzimamo podatke o potrošnji, želimo indeks realnog prometa koji je sezonski i kalendarski prilagođen
+#kad pretvaramo bazni indeks u stopu promjene, uspoređujemo vrijednost u 1. mjesecu s vrijednošću u 1. mjesecu prije 12 mjeseci tako da ih podijelimo 
+#bazni indeks=(yt-y0)*100
+#npr. I13/I1=(y13/y0)*100/(y1/y0)*100, tj. y13/y1-1 
+
+
 >>>#Primjer 1A:Učitaj podatke iz csv multiTimeline.csv. Podatke prikaži grafički. Komentiraj.
 
 import numpy as np
@@ -19,7 +36,9 @@ plt.close()
 
 #trebamo započeti s podacima od 2012. jer vidimo kaos prije toga vjerojatno zbog toga što podaci nisu bili dobro prikupljeni
 
-data=data.iloc[84:,]
+data=data.iloc[85:,]
+
+#mislim da 85 jer je 86. redak 01-01-2012
 
 >>>#Primjer 1B:Prikaži grafički podatke pomoću dijagrama rasipanja. Komentiraj.
 
@@ -30,6 +49,8 @@ plt.title("Dijagram rasipanja")
 
 plt.show()
 plt.close()
+
+#nema sistematičnog ponašanja, nema veze među podacima
 
 >>>#Primjer 2.: Procijeni model jednostavne linearne regresije gdje je y=retail, a x=cijena. Ucrtaj procijenjeni pravac.
 
@@ -171,12 +192,40 @@ print("GT varijabla[",data.columns[3],"], beta : ",reg_a.params[1])
 
 #Najbolji je model 1 jer je koeficijent determinacije najveći. 
 
+#možemo napraviti i for petlju za ovo za kraći način
+
+import statsmodels.api as sm
+import pandas as pd
+
+reg_models = []
+
+for i in range(0, 4):
+    # Extracting independent variable (feature)
+    X = data.iloc[:, i]
+    
+    # Adding a constant term to the independent variable matrix
+    X = sm.add_constant(X)
+    
+    # Performing Ordinary Least Squares (OLS) regression
+    reg_model = sm.OLS(data['retail'], X).fit()
+    
+    # Append the regression model to the list
+    reg_models.append(reg_model)
+
+    # Printing the results for each model
+    print(f"Model {i}")
+    print("R-Square: ", reg_model.rsquared)
+    print("Coefficients:")
+    print(reg_model.params)
+    print("\n")
+
 >>>#Primjer 8: Predloži način kako bi se odabrao najbolji linearni model od ponuđenih varijabli.
 
 #forward
 #1st step - cijena
 
 #2.1 - 2nd step, prva verzija
+#y=x1+x2
 
 X = data.iloc[:, [0,1]].values.reshape(-1, 2)  # values converts it into a numpy array
 
@@ -187,10 +236,12 @@ print("R-Square : ",reg_a.rsquared)
 print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
 print("GT varijabla[",data.columns[[0,1]].values,"], beta : ",reg_a.params[1:3])
 
+##########################
 #forward
 #1st step - cijena
 
 #2.2 - 2nd step, druga verzija
+#y=x1+x3
 
 X = data.iloc[:, [0,2]].values.reshape(-1, 2)  # values converts it into a numpy array
 
@@ -201,10 +252,12 @@ print("R-Square : ",reg_a.rsquared)
 print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
 print("GT varijabla[",data.columns[[0,2]].values,"], beta : ",reg_a.params[1:3])
 
+############################
 #forward
 #1st step - cijena
 
 #2.3 - 2nd step, prva verzija
+#y=x1+x4
 
 X = data.iloc[:, [0,3]].values.reshape(-1, 2)  # values converts it into a numpy array
 
@@ -215,40 +268,49 @@ print("R-Square : ",reg_a.rsquared)
 print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
 print("GT varijabla[",data.columns[[0,3]].values,"], beta : ",reg_a.params[1:3])
 
+#gledamo koji od ovih ima najveći koeficijent determinacije
+#možemo vidjeti da je to 1. model, tj. x1+x2 pa onda opet idemo dodavati nove varijable tome da vidimo koji bi bio najbolji
+
+####################################
 #forward
 #1st step - cijena
 
-#2nd step - lidl
+#2nd step - katalog
 
 #3.1. 3rd step, prva verzija
+#y=x1+x2+x3
 
-X = data.iloc[:, [0,2,1]].values.reshape(-1, 3)  # values converts it into a numpy array
+X = data.iloc[:, [0,1,2]].values.reshape(-1, 3)  # values converts it into a numpy array
 
 X0=sm.add_constant(X)
 reg_a=sm.OLS(Y,X0).fit()
 
-print("R-Square : ",reg_a.rsquared)
+print("R-Square : ",reg_a.rsquared_adj)
 print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
-print("GT varijabla[",data.columns[[0,2,1]].values,"], beta : ",reg_a.params[1:3])
+print("GT varijabla[",data.columns[[0,1,2]].values,"], beta : ",reg_a.params[1:3])
 
+######################
 #forward
 #1st step - cijena
 
 #2nd step - lidl
 
 #3.2. 3rd step, druga verzija
+#y=x1+x2+x4
 
-X = data.iloc[:, [0,2,3]].values.reshape(-1, 3)  # values converts it into a numpy array
+X = data.iloc[:, [0,1,3]].values.reshape(-1, 3)  # values converts it into a numpy array
 
 X0=sm.add_constant(X)
 reg_a=sm.OLS(Y,X0).fit()
 
-print("R-Square : ",reg_a.rsquared)
+print("R-Square : ",reg_a.rsquared_adj)
 print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
-print("GT varijabla[",data.columns[[0,2,3]].values,"], beta : ",reg_a.params[1:3])
+print("GT varijabla[",data.columns[[0,1,3]].values,"], beta : ",reg_a.params[1:3])
 
 #Prema ovim izračunima najbolji bi bio predzadnji model jer ima najveći koeficijent determinacije.
-#Međutim, ovi modeli su nastali tako što smo u svaki dodavali više nezavisnih varijabli, što znali da treba gledati korigirani koeficijent determinacije. 
+#Međutim, ovi modeli su nastali tako što smo u svaki dodavali više nezavisnih varijabli, što znali da treba gledati korigirani koeficijent determinacije.
+#u ovaj kod smo već stavili rsquared da nam računa
+#najbolji model:y=x1+x2+x3, tj. retail=cijena+katalog+lidl
 
 #reg_a.rsquared_adj ako hoćemo računati korigirani 
 
