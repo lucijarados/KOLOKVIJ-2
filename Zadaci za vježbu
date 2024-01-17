@@ -25,6 +25,14 @@ z=7
 rezultat=np.power(y,x)*np.log(z)
 print(rezultat) 
 
+#drugi način
+
+import numpy as np
+x=2
+y=5
+z=7
+print(y**x*np.log(z))
+
 #log računa ln, a log10 računa log, ali ako ne piše podrazumijeva se da trebamo ln
 
 #Zadatak 3.
@@ -33,7 +41,7 @@ print(rezultat)
 
 x=2
 
-if x > -3 and x < 3:
+if ((x<-3) or  (x>3)):
     print ("Broj nije izdvojenica")
 else:
     print ("Broj je izdvojenica")
@@ -44,6 +52,11 @@ x=[11,13,17,19]
 
 for i in x:
     print(i)
+
+#drugi način
+
+for x in [11, 13, 17,19]:
+    print(x)
 
 >>>Kreiraj for naredbu koja iterira po elementima liste [11,13,17,19] te ispisuje True ako se broj čita isto s lijeva i s desna.
 
@@ -58,9 +71,9 @@ for i in brojevi:
 
 #drugi način
 
-for x in [11, 13, 17, 19]:
-   if(x%10)==(x//10):
-   print("True")
+for x in [11, 13, 17,19]:
+    if((x%10) == (x//10)):
+        print("True")
 
 #možemo i samo if x==11, print True
 
@@ -84,19 +97,13 @@ C=np.random.randint(0,5,(4,4))
 
 print(C)
 
-#kvadriranje
-C_kvadrat=np.power(C,2)
-print(C_kvadrat)
+#potenciranje elemenata
+print(C**2)
 
-#množenje
-C = np.array([[2, 0, 4, 1],
-              [4, 1, 1, 3],
-              [4, 1, 3, 1],
-              [2, 2, 3, 2]])
+#mnozenje matrica
+print(np.dot(C,C))
 
-rezultat_mnozenja = np.dot(C, C)
-
-print(rezultat_mnozenja)
+#Radi se o različitim operacijama
 
 Rezultati se razlikuju jer kod kvadriranja rezultat je matrica u kojoj je svaki element kvadriran, a kod množenja se vrši matrično množenje.
 
@@ -110,12 +117,14 @@ print("oblik matrice", np.shape(D))
 >>> Definiraj matricu E dimenzija 20x1 koja sadrži slučajne brojeve iz uniformne distribucije s modalitetima u [0,1].
 Ispiši prvi element, sedmi element, te predzadnji element.
 
+np.random.seed(seed=1)
 E=np.random.random((20,1))
 print(E)
 
-print("1.element", E[0,0]) #ni ne treba nam ova 0
-print("7.element", E[6,0]) #ni ne treba nam ova 0
-print("predzadnji element", E[18,0])  #može i -2
+print("1. element \n", E[0])
+print("7. element \n", E[6])
+print("predzadnji element \n", E[-2])  #drugi način print(E[18])
+
 
 >>>Definiraj matricu F proizvoljnih dimenzija (broj redaka i stupaca je veći od 5) te ispiši parne retke.
 
@@ -127,52 +136,12 @@ print("\n parni retci", F[1:6:2,:]) #2. redak do 6. retka po 2
 >>>Definiraj matricu G proizvoljnih dimenzija (broj redaka i stupaca je veći od 5) te ispiši maksimalni element matrice,
 poziciju maksimalnog elementa te maksimum po stupcima.
 
-G=np.random.normal(0,1,(7,7))
+G=np.random.randint(0,10,(6,7))
+
 print(G)
-
-#maksimalni element
-def pronadi_maksimalni_element(G):
-    # Koristi list comprehension za dobivanje svih elemenata iz matrice
-    svi_elementi = [element for red in G for element in red]
-    
-    # Pronađi maksimalni element u listi svih elemenata
-    maksimalni_element = max(svi_elementi)
-    
-    return maksimalni_element
-
-rezultat = pronadi_maksimalni_element(G)
-print("Maksimalni element matrice je:", rezultat)
-
-maksimalni_element = G[0][0]
-indeksi_maksimalnog_elementa = (0, 0)
-
-#ima i samo funkcija np.max, puno jednostavnije
-
-#pozicija
-for i, red in enumerate(G):
-    # Iterirajte kroz elemente u svakom redu
-    for j, element in enumerate(red):
-        # Ako je trenutni element veći od trenutnog maksimalnog, ažurirajte maksimalni element i indekse
-        if element > maksimalni_element:
-            maksimalni_element = element
-            indeksi_maksimalnog_elementa = (i, j)
-
-# Ispis pozicije maksimalnog elementa nakon što je petlja završena
-print("Pozicija maksimalnog elementa u matrici je:", indeksi_maksimalnog_elementa)
-
-#maksimum po stupcima
-def maksimum_po_stupcima(G):
-    # Pretvori matricu u NumPy array
-    np_matrica = np.array(G)
-    
-    # Koristi funkciju np.max s parametrom axis=0 za pronalaženje maksimuma po stupcima
-    maksimumi_po_stupcima = np.max(np_matrica, axis=0)
-    
-    return maksimumi_po_stupcima
-
-
-rezultat = maksimum_po_stupcima(G)
-print("Maksimumi po stupcima su:", rezultat)
+print(np.max(G))
+print(np.argmax(G))
+print(np.max(G,axis=0))
 
 #Zadatak 5. Učitaj podatke iz csv GTzadaci.csv. U dokumentu se nalaze tri Google Trends niza koji prikazuju popularnost pojmova: financije, inflacija i recesija te Indeks pouzdanja potrošača (Consumer Confidence Index, CCI).
 Google Trends podaci se interpretiraju kao popularnost pretraživanja pojma, dok CCI odražava pouzdanje. 
@@ -190,6 +159,8 @@ Svi podaci su izračunani za Hrvatsku za period 01/2020 - 11/2023. Riješi sljed
 
 print(data.iloc[0,:])
 print(data.iloc[:,0])
+
+#zašto je njoj ovdje ispisalo inflaciju, tj. 2.stupac????
 
 #u ispisu prvog retka vidljivi su nazivi stupaca, tj. njihove oznake
 #u ispisu prvog stupca vidljivi su podaci o popularnosti pojma financije
@@ -223,6 +194,28 @@ plt.legend(loc='upper left', fontsize='small')
 plt.show()
 plt.close()
 
+#drugi način
+
+[m,n]=data.shape
+
+#Ovo bi mogli bolje napisati tako da delta sadrži samo jedan stupac, bolje rješenje bi bilo columns=data.columns[0:1]
+#i kasnije u tekstu pišemo delta.iloc[i,0]
+#Ostavljam prvu verziju kako smo na ponavljanju radili
+delta = pd.DataFrame(np.nan, index=data.index, columns=data.columns)
+
+# trebamo za inflaciju - to je drugi stupac u excelu, numerirano u DataFrame  s 1
+for i in range(1,m):
+    delta.iloc[i,1]=data.iloc[i,1]-data.iloc[(i-1),1]
+
+print(delta.iloc[:,1])
+
+#grafički
+import matplotlib.pyplot as plt
+
+plt.plot(delta.iloc[:,1], label="Inflacija")
+plt.show()
+plt.close()
+
 #niz je stacionaran
 #povećanje varijabilnosti u vrijeme pandemije
 #prosjek je 0
@@ -230,15 +223,8 @@ plt.close()
 
 >>> Grafički prikaži sva tri GT indikatora, što zaključuješ?
 
-plt.plot(data, label=data.columns)
-
-plt.xlabel("Mjeseci")
-plt.ylabel("Indeks")
-plt.title("Google Trends podaci")
-#plt.yticks([0,25,50,75,100])
-#plt.grid(True)
+plt.plot(data.iloc[:,0:3], label=data.columns[0:3])
 plt.legend(loc='upper left', fontsize='small')
-
 plt.show()
 plt.close()
 
@@ -252,6 +238,15 @@ plt.close()
 plt.style.use("classic")
 
 plt.scatter(data["recesija"],data["inflacija"])
+
+plt.title("Dijagram rasipanja")
+
+plt.show()
+plt.close()
+
+#drugi način
+
+plt.scatter(data.iloc[:,2],data.iloc[:,1])
 
 plt.title("Dijagram rasipanja")
 
@@ -274,6 +269,15 @@ plt.title("Distribucija popularnosti pojma recesija")
 
 plt.show()
 plt.close()
+
+#drugi način
+
+plt.hist(data["recesija"],bins=5,range=[0,100])
+
+plt.show()
+plt.close()
+#Histogram prikazuje distribuciju - odgovara na pitanje koliko su česte vrijednosti indikatora.
+#Najčešća je niska popularnost pretraživanja pojma "recesija" a to ćemo potvrditi i kad prikažemo sljedeći grafikon.
 
 #iz histograma možemo zaključiti da je najveća frekvencija u razredu 0-20, što znači da pojam recesija nije popularan.
 
@@ -301,6 +305,28 @@ ratio=data["recesija"]/data["inflacija"]*100
 descriptives = ratio.describe()
 
 print(descriptives)
+
+#drugi način
+
+ratio =data["recesija"]/data["inflacija"]*100
+
+#print(ratio)
+
+plt.plot(ratio)
+
+plt.show()
+#plt.close()
+
+print(data["inflacija"])
+#Postoje vrijednosti 1 za inflaciju zbog kojih niz ima ekstremne vrijednosti na početku. Može se pogledati
+#grafikon na kojem odrežemo problematičan početak kako bi se bolje vidjela dinamika 
+
+#print(ratio)
+#bez prve dvije godine
+plt.plot(ratio.iloc[24:])
+
+plt.show()
+#plt.close()
 
 #Prosječna vrijednost omjera iznosi 115,47 - recesija je u prosjeku popularnija od inflacije kao pojam pretraživanja.
 #Standardna devijacija iznosi 517,46 - velika varijabilnost 
