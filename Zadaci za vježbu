@@ -354,8 +354,16 @@ for j in range(n):
         delta_log.iloc[i, j] = log_data.iloc[i, j] - log_data.iloc[i - 12, j]
 
 # Print the result
-print("Rate of change for natural logarithm for all columns except the last one between time t and time t-12:")
-print(delta_log.iloc[12:, :])  # Skip the first 12 rows with NaN values
+print("stope promjene")
+print(delta_log) 
+
+#drugi način - PROF
+
+#delta=dat.diff(periods=1,axis=0)
+
+logGT=np.log(data.iloc[:,0:3])
+
+gt=logGT.diff(periods=12,axis=0)*100
 
 >>>Izračunajte diferenciju promjene za CCI indikator po formuli deltaCCIt=CCIt-CCIt-12.
 
@@ -367,31 +375,43 @@ delta_last_column = pd.DataFrame(np.nan, index=data.index, columns=[data.columns
 delta_last_column.iloc[12:, 0] = data.iloc[12:, -1].values - data.iloc[:-12, -1].values
 
 # Print the result
-print("Differences for the last column between time t and time t-12:")
+print("stope promjene CCI:")
 delta_last_column.rename(columns={'CCI': 'deltaCCI'}, inplace=True)
 print(delta_last_column)
 
-#dodat ćemo deltaCCI postojećem dataframeu "data"
-data = pd.concat([data, delta_last_column], axis=1)
-print(data)
+#može samo i diff funkcija-PROF
 
-#može samo i diff funkcija
+deltaCCI=data["CCI"].diff(periods=12)
+print(deltaCCI)
 
 >>>Procijeni regresijski model i napiši regresijsku jednadžbu. deltaCCIt=ß0 + ß1gt,recesija + et
 
 #slope je ß1
 #intercept je ß0
 
+#treba maknuti prvih 12 podataka zbog NaN
+X = gt.iloc[12:167, 2].values.reshape(-1, 1)  
+Y = deltaCCI.iloc[12:167].values.reshape(-1, 1)  
+
+#koristimo ovaj paket jer nas traži procjenu jednadžbe
+import statsmodels.api as sm
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+deltaCCI=1,28 - 0,01gt,recesija
+
+#možemo i dodati ovaj korak prije da nam procijeni regresiju:
+
 import numpy as np #izračuni
 import pandas as pd #učitavanje data framea
 import matplotlib.pyplot as plt #vizualizacija
 from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
 
-
-# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
-
-X = data.iloc[:, 2].values.reshape(-1, 1)  
-Y = data.iloc[:, 4].values.reshape(-1, 1) 
+X = gt.iloc[12:167, 2].values.reshape(-1, 1)  
+Y = deltaCCI.iloc[12:167].values.reshape(-1, 1)  
 # -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
 
 #stvara objekt za linearnu regresiju
@@ -400,34 +420,19 @@ linear_regressor = LinearRegression()
 linear_regressor.fit(X, Y)  # perform linear regression
 Y_pred = linear_regressor.predict(X)  # make predictions
 
-from sklearn import metrics
-  
-# printing values 
-print('Slope:' ,linear_regressor.coef_) 
-print('Intercept:', linear_regressor.intercept_) 
-
-deltaCCIt=2,75 - 0,14gt,recesija
-
-#fali greška relacije
-
 >>> Izračunaj regresijske vrijednosti te ih ucrtaj na dijagram rasipanja. Što zaključuješ?
 
-plt.scatter(X, Y)
-plt.show()
+Y_pred = linear_regressor.predict(X)  # make predictions
 
-#dijagram rasipanja?? 
+plt.scatter(Y, Y_pred)
+
+#nema sistematičnog ponašanja
 
 >>>Ocijeni fit prethodnog modela tako da koristiš barem dva različita indikatora. Što zaključuješ?
+#komentiramo test značajnosti i R2
 
-rmse = np.sqrt(mse) 
-r2 = metrics.r2_score(Y, Y_pred) 
-print("RMSE",rmse)
-print("R2", r2)
-
-RMSE 9.41015937928068
-R2 0.030726273351731392
-
-#Budući da je koeficijent determinacije samo 3% zaključujemo da je ovaj model iznimno loš za prikazivanje podataka.
+#R2=0,043 -> niska vrijednost, svega 4,3% odstupanja je objašnjeno modelom.
+#za x1(recesija), p-vrijednost(0,010) je manja od alfa za 5%, što znači da je varijabla recesija statistički značajna u modelu. 
 
 >>>Procijeni model pomoću statsmodels.api libraryija. Komentiraj rezultate testa značajnosti nezavisnih varijabli.
 
@@ -438,57 +443,44 @@ reg_a=sm.OLS(Y,X0).fit()
 
 reg_a.summary()
 
+#može i samo reg_a.summary() jer smo već prije procijenili model
 
-#p-vrijednost=0,023
-#ako je alfa=5%, donosimo p-vrijednost je manja od alfa, odbacujemo nultu hipotezu i zaključujemo da je varijabla gt,recesija statistički značajna u modelu
+#p-vrijednost=0,010
+#ako je alfa=5%, p-vrijednost je manja od alfa, odbacujemo nultu hipotezu i zaključujemo da je varijabla gt,recesija statistički značajna u modelu
 
 #Zadatak 7.  Koristeći podatke definirane u Zadatku 6 izračunaj sljedeće zadatke:
 >>> Procijeni linerni regresijski model kao prvi samo su nam svi gt indikatori nezavisne varijable te napiši procijenjenu jednadžbu.
 
+import numpy as np #izračuni
+import pandas as pd #učitavanje data framea
+import matplotlib.pyplot as plt #vizualizacija
+from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
 
-import numpy as np
-import pandas as pd
-from sklearn.linear_model import LinearRegression
+X = gt.iloc[12:167, 0:3].values.reshape(-1, 3)  
+Y = deltaCCI.iloc[12:167].values.reshape(-1, 1)  
+# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
 
-# Assuming 'data' is your DataFrame
-X = data[['financije', 'recesija', 'inflacija']]  # Assuming 'X1', 'X2', 'X3' are your column names
-Y = data['deltaCCI']
+#stvara objekt za linearnu regresiju
+linear_regressor = LinearRegression()  
 
-# Create a Linear Regression model
-linear_regressor = LinearRegression()
+linear_regressor.fit(X, Y)  # perform linear regression
+Y_pred = linear_regressor.predict(X)  # make predictions
 
-# Fit the model
-linear_regressor.fit(X, Y)
-
-# Print the coefficients and intercept
-print('Coefficients:', linear_regressor.coef_)
-print('Intercept:', linear_regressor.intercept_)
-
-# Predict using the trained model
-Y_pred = linear_regressor.predict(X)
-
-Coefficients: [ 0.07336261 -0.14353814 -0.1335101 ]
-Intercept: 0.8801216152762595
-
-deltaCCIt=0,88 + 0,07gt,financije - 0,14gt,recesija - 0,13gt,inflacija
+deltaCCI=1,35 - 0,04gt,financije - 0,02gt,inflacija - 0,01gt,recesija
 
 >>>Procijeni model pomoću statsmodels.api libraryija. Komentiraj rezultate testa značajnosti nezavisnih varijabli.
 
 import statsmodels.api as sm
 
-# Assuming 'data' is your DataFrame with multiple independent variables (X1, X2, X3, ...)
-# and a dependent variable 'Y'
-X = data[['financije', 'recesija', 'inflacija']]  # Include all independent variables
-Y = data['deltaCCI']
+#X = gt.iloc[12:167, 2].values.reshape(-1, 1)  
+#Y = deltaCCI.iloc[12:167].values.reshape(-1, 1) 
 
-# Add a constant term to the independent variables
-X0 = sm.add_constant(X)
+X = gt.iloc[12:167, 0:3].values.reshape(-1, 3)  
 
-# Fit the OLS regression model
-reg_a = sm.OLS(Y, X0).fit()
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
 
-# Display the summary tistics
-print(reg_a.summary())
+reg_a.summary()
 
 #Usporedbom p-vrijednosti i alfa na 5%, recesija i inflacija su statistički značajne u modelu, dok financije nisu. 
 
@@ -497,31 +489,24 @@ print(reg_a.summary())
 #ne vrtimo dodatni kod jer u prethodnom imamo sve izračunato
 
 ====
-Dep. Variable:               deltaCCI   R-squared:                       0.116
-Model:                            OLS   Adj. R-squared:                  0.099
-Method:                 Least Squares   F-statistic:                     7.106
-Date:                Sat, 13 Jan 2024   Prob (F-statistic):           0.000162
-Time:                        12:32:00   Log-Likelihood:                -578.29
-No. Observations:                 167   AIC:                             1165.
-Df Residuals:                     163   BIC:                             1177.
+	R-squared:	0.087
+	Adj. R-squared:	0.069
+	AIC:	1098.
 
-
-#koeficijent determinacije samo 11,6%, AIC i BIC relativno veliki, znači da je model loš.
+	
+#koeficijent determinacije samo 8,7%, AIC i BIC relativno veliki, znači da je model loš.
 
 >>> Usporedi fit prethodnog modela i modela iz Zadatka 5 tako da koristiš barem dva različita indikatora. Što zaključuješ?
 
 #ispis za model iz prošlog zadatka
-R-squared:	0.031
-Adj. R-squared:	0.025
-AIC:	1176.
-BIC:	1182.
+R-squared:	0.043
+Adj. R-squared:	0.037
+AIC:	1101
+
 
 #Koeficijent determinacije nije baš mjerodavan za usporedbu jer smo u ovaj model dodali više varijabli pa ćemo gledati korigirani.
-#Za 1. model je korigirani R2=0,025, a za 2. model=0,099, iz čega zaključujemo da je 2. model bolji jer je korigirani R2 veći.
-#ako uspoređujemo informacijske kriterije, AIC za 1. model=1176, a za 2. model=1165 -> 2. model je bolji
-#BIC za 1. model=1182, a za 2. model=1177 -> 2. model je bolji
-#možemo pogledati još i RMSE, za 1. model RMSE 9.41015937928068, a za 2. model RMSE 7.720564273447207 -> 2. model je bolji jer je RMSE manji
-
+#Za 1. model je korigirani R2=0,037 a za 2. model=0,069 iz čega zaključujemo da je 2. model bolji jer je korigirani R2 veći.
+#ako uspoređujemo informacijske kriterije, AIC za 1. model=1101, a za 2. model=1098 -> bolji je 2.model jer je AIC manji
 
 #da izračunamo RMSE za 2. model (ubacili smo u dio koda gdje smo procijenili regresiju)
 RMSE=np.sqrt(np.mean(((Y-Y_pred)**2))) #prosječno kvadratno odstupanje 
@@ -531,150 +516,43 @@ print(RMSE)
 >>>Zadatak 8.: Procijeni tri modela jednostavne linearne regresije gdje je y=CCI, a x=jedna od GT varijabli. Usporedi modele i odaberi finalni model. (Uputa: Potrebno je obrazložiti svaku odluku.
 Ovaj zadatak može se riješiti na više načina s različitim rješenjima, no važno je da je vaš slijed zaključivanja logičan.)
 
-#1. model x=gt, financije
-
-import numpy as np #izračuni
-import pandas as pd #učitavanje data framea
-import matplotlib.pyplot as plt #vizualizacija
-from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
-
-
-# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
-
-X = data.iloc[:, 0].values.reshape(-1, 1)  
-Y = data.iloc[:, 3].values.reshape(-1, 1) 
-# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
-
-#stvara objekt za linearnu regresiju
-linear_regressor = LinearRegression()  
-
-linear_regressor.fit(X, Y)  # perform linear regression
-Y_pred = linear_regressor.predict(X)  # make predictions
-
-from sklearn import metrics
-  
-# printing values 
-print('Slope financije:' ,linear_regressor.coef_) 
-print('Intercept financije:', linear_regressor.intercept_) 
-
-
 #1. model
-
-import statsmodels.api as sm
+#financije
+X = gt.iloc[12:167, 0].values.reshape(-1, 1) 
 
 X0=sm.add_constant(X)
 reg_a=sm.OLS(Y,X0).fit()
 
 reg_a.summary()
-
-#########################
-#2. model x=gt, inflacija
-
-import numpy as np #izračuni
-import pandas as pd #učitavanje data framea
-import matplotlib.pyplot as plt #vizualizacija
-from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
-
-
-# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
-
-X = data.iloc[:, 1].values.reshape(-1, 1)  
-Y = data.iloc[:, 3].values.reshape(-1, 1) 
-# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
-
-#stvara objekt za linearnu regresiju
-linear_regressor = LinearRegression()  
-
-linear_regressor.fit(X, Y)  # perform linear regression
-Y_pred = linear_regressor.predict(X)  # make predictions
-
-from sklearn import metrics
-  
-# printing values 
-print('Slope inflacija:' ,linear_regressor.coef_) 
-print('Intercept inflacija:', linear_regressor.intercept_) 
 
 #2. model
-
-import statsmodels.api as sm
+#inflacija
+X = gt.iloc[12:167, 1].values.reshape(-1, 1) 
 
 X0=sm.add_constant(X)
 reg_a=sm.OLS(Y,X0).fit()
 
 reg_a.summary()
-
-#########################
-#3. model x=gt, recesija
-
-import numpy as np #izračuni
-import pandas as pd #učitavanje data framea
-import matplotlib.pyplot as plt #vizualizacija
-from sklearn.linear_model import LinearRegression #procjene modela, paket: scikit-learn
-
-
-# Da bi mogli pozvati linearnu regresiju, treba imati numpy objekte
-
-X = data.iloc[:, 2].values.reshape(-1, 1)  
-Y = data.iloc[:, 3].values.reshape(-1, 1) 
-# -1 znači da python sam prepozna koliko ima redaka, 1 znači da objekt treba imati jedan stupac
-
-#stvara objekt za linearnu regresiju
-linear_regressor = LinearRegression()  
-
-linear_regressor.fit(X, Y)  # perform linear regression
-Y_pred = linear_regressor.predict(X)  # make predictions
-
-from sklearn import metrics
-  
-# printing values 
-print('Slope recesija:' ,linear_regressor.coef_) 
-print('Intercept recesija:', linear_regressor.intercept_) 
 
 #3. model
-
-import statsmodels.api as sm
+#recesija
+X = gt.iloc[12:167, 2].values.reshape(-1, 1) 
 
 X0=sm.add_constant(X)
 reg_a=sm.OLS(Y,X0).fit()
 
 reg_a.summary()
-
-###################################################
-
-#ovo smo dodali svuda u izračun regresije
-RMSE=np.sqrt(np.mean(((Y-Y_pred)**2))) #prosječno kvadratno odstupanje 
-print("RMSE3",RMSE)
-
-####################################################
-
-#jednadžba 1. modela: CCIt=-7,55 - 0,21gt,financije
-#jednadžba 2. modela: CCIt=-18,83 - 0,09gt,inflacija
-#jednadžba 3. modela: CCIt=-15,25 - 0,51gt,recesija
-
 
 model 1                 model 2              model 3 
 
-R2=0,097                R2=0,013             R2=0,243
-R2adj=0,091             R2adj=0,007          R2adj=0,239
-AIC=1256                AIC=1271             AIC=1227
-BIC=1263                BIC=1277             BIC=1233
-RMSE1 10.28             RMSE2 10.75          RMSE3 9.41
+R2adj=0,000            R2adj=0,030         R2adj=0,037
+AIC=1107               AIC=1102             AIC=1101
 
-#po svim kriterijima, model 3 je najbolji - najveći R2 i R2adj, najmanji informacijski kriteriji i najmanji RMSE
-#sljedeći "najbolji" je model 1 i zatim model 2, iako su oba zapravo dosta loša
+
+#po svim kriterijima, model 3 je najbolji - R2adj, najmanji AIC
+#sljedeći "najbolji" je model 2 i zatim model 1, iako su oba zapravo dosta loša
 #iako je model 3 najbolji od ovih navedenih, on i dalje nije idealan budući da ima dosta nizak koeficijent determinacije pa ne objašnjava najbolje zavisnu varijablu
 
-
-#drugi način
-
-X = data.iloc[:, 0].values.reshape(-1, 1)  # values converts it into a numpy array #u ilocu 0 samo mijenjamo ovisno o tome koji x želimo
-
-X0=sm.add_constant(X)
-reg_a=sm.OLS(Y,X0).fit()
-
-print("R-Square : ",reg_a.rsquared)
-print("GT varijable",data.columns[0:4].values,", beta : ",reg_a_full.params[1:5])
-print("GT varijabla[",data.columns[0],"], beta : ",reg_a.params[1])
 
 
 >>>Zadatak 9: Između modela koji sadrže dvije nezavisne varijable (GT indikatore) i y=CCI odaberi najbolji. Obrazloži zaključivanje.
@@ -729,98 +607,37 @@ for result in results:
     print(result['Model'].summary())
     print(f"RMSE: {result['RMSE']}")
     print("\n" + "="*50 + "\n")
-#treba li i promijeniti redoslijed varijablama u kombinaciji?
+
 
 #############################################################################
-Independent Variables: ['financije', 'inflacija']
-                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:                    CCI   R-squared:                       0.122
-Model:                            OLS   Adj. R-squared:                  0.111
-Method:                 Least Squares   F-statistic:                     11.37
-Date:                Sat, 13 Jan 2024   Prob (F-statistic):           2.38e-05
-Time:                        15:58:56   Log-Likelihood:                -623.79
-No. Observations:                 167   AIC:                             1254.
-Df Residuals:                     164   BIC:                             1263.
-Df Model:                           2                                         
-Covariance Type:            nonrobust                                         
-==============================================================================
-                 coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------
-const         -4.1612      3.534     -1.178      0.241     -11.139       2.817
-financije     -0.2204      0.049     -4.506      0.000      -0.317      -0.124
-inflacija     -0.1208      0.056     -2.165      0.032      -0.231      -0.011
-==============================================================================
-Omnibus:                       26.329   Durbin-Watson:                   0.271
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):                7.023
-Skew:                          -0.081   Prob(JB):                       0.0299
-Kurtosis:                       2.009   Cond. No.                         305.
-==============================================================================
-RMSE: 10.138307432100575
+#drugi način da svaki posebno računamo:
 
-Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+#financije i inflacija
+X = gt.iloc[12:167, [0,1]].values.reshape(-1, 2) 
 
-==================================================
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
 
-Independent Variables: ['financije', 'recesija']
-                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:                    CCI   R-squared:                       0.285
-Model:                            OLS   Adj. R-squared:                  0.277
-Method:                 Least Squares   F-statistic:                     32.76
-Date:                Sat, 13 Jan 2024   Prob (F-statistic):           1.07e-12
-Time:                        15:58:56   Log-Likelihood:                -606.56
-No. Observations:                 167   AIC:                             1219.
-Df Residuals:                     164   BIC:                             1228.
-Df Model:                           2                                         
-Covariance Type:            nonrobust                                         
-==============================================================================
-                 coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------
-const         -6.9339      2.860     -2.424      0.016     -12.581      -1.287
-financije     -0.1394      0.045     -3.108      0.002      -0.228      -0.051
-recesija      -0.4629      0.070     -6.583      0.000      -0.602      -0.324
-==============================================================================
-Omnibus:                        1.802   Durbin-Watson:                   0.389
-Prob(Omnibus):                  0.406   Jarque-Bera (JB):                1.838
-Skew:                           0.245   Prob(JB):                        0.399
-Kurtosis:                       2.843   Cond. No.                         266.
-==============================================================================
-RMSE: 9.144618127355317
+reg_a.summary()
 
-Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+#financije i recesija
+X = gt.iloc[12:167, [0,2]].values.reshape(-1, 2) 
 
-==================================================
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
 
-Independent Variables: ['inflacija', 'recesija']
-                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:                    CCI   R-squared:                       0.247
-Model:                            OLS   Adj. R-squared:                  0.238
-Method:                 Least Squares   F-statistic:                     26.88
-Date:                Sat, 13 Jan 2024   Prob (F-statistic):           7.98e-11
-Time:                        15:58:56   Log-Likelihood:                -610.95
-No. Observations:                 167   AIC:                             1228.
-Df Residuals:                     164   BIC:                             1237.
-Df Model:                           2                                         
-Covariance Type:            nonrobust                                         
-==============================================================================
-                 coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------
-const        -14.4047      1.416    -10.169      0.000     -17.202     -11.608
-inflacija     -0.0452      0.052     -0.878      0.381      -0.147       0.056
-recesija      -0.5051      0.071     -7.137      0.000      -0.645      -0.365
-==============================================================================
-Omnibus:                        0.927   Durbin-Watson:                   0.308
-Prob(Omnibus):                  0.629   Jarque-Bera (JB):                0.932
-Skew:                           0.176   Prob(JB):                        0.627
-Kurtosis:                       2.903   Cond. No.                         52.0
-==============================================================================
-RMSE: 9.388140942076822
+reg_a.summary()
+
+#inflacija i recesija
+X = gt.iloc[12:167, [1,2]].values.reshape(-1, 2) 
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
 
 #############################################################################
+
 
 #uspoređivali smo R2, R2adj, AIC, BIC i RMSE
 #možemo zaključiti da je model 2 najbolji, tj. onaj u kojem je x1=financije, a x2=recesija - najveći R2 i R2adj, najmanji BIC i AIC, najmanji RMSE
