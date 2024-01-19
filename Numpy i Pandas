@@ -1,3 +1,17 @@
+FUNKCIJA    NAN verzija     OPIS
+np.sum      np.nansum       Zbroj elemenata
+np.prod     np.nanprod      Umnožak elemenata
+np.mean     np.nanmean      Prosjek
+np.std      np.nanstd       Standarna devijacija
+np.var      np.nanvar       Varijanca
+np.min      np.nanmin       Minimum
+np.max      np.nanmax       Maksimum
+np.argmin   np.nanargmin    indeks minimalnog elementa
+np.argmax   np.nanargmax    indeks maksimalnog elementa
+np.median   np.nanmedian     Median
+np.percentile np.nanpercentile Percentil
+
+
 #Primjer 1.
 >>>>>> Ispiši prvi i zadnji element liste 
 , dodaj novi element te ukloni drugi
