@@ -1,0 +1,60 @@
+#Zadatak 1: Učitaj paket NumPy pod alisom np i Pandas pod alisom pd te riješi sljedeće zadatke. Postavi seed=5.
+
+import numpy as np
+import pandas as pd
+np.random.seed(seed=5)
+
+>>>#Definiraj matricu slučajnih brojeva iz jednolike distribucije s modalitetima 1,2,...,8 dimenzija 4x4 oznaka: A. 
+
+A=np.random.randint(1,9,(4,4)) #od 0 do 10 bez 10 želimo 7 elemenata, jednolika distribucija
+print(A)
+
+>>>#Definiraj vektore a i  b tako da a sadrži prvi stupac matrice A, a b sadrži zadnji stupac matrice A. Ispiši zbroj vektora a i b.
+
+a=A[:,0]
+b=A[:,3]
+print("zbroj=", a+b)
+
+>>>#Definiraj vektor c kao omjer a i b. Pomoću for petlje prođi po elementima vektora c i ispiši vrijednosti koje su veće od medijana od c. 
+
+c=a/b
+
+for i in c:
+    if (i > np.percentile(c,50)):
+        print(i)
+
+>>>#Definiraj DataFrame iz matrice A te ga nazovi podaci. Elemente matrice A spremi u jedan stupac (pomoću funkcije reshape)
+
+A_reshape=A.reshape(-1,1)
+podaci = pd.DataFrame(A_reshape)
+print(podaci)
+
+>>>#Iz DataFrame podaci generiraj dva uzorka s ponavljanjem veličine 4 i dva uzorka bez ponavljanja veličine 4. Uzorke s ponavljanjem nazovi nrep, te uzorke bez ponavljanja 
+norep. Objasni razliku između uzoraka s ponavljanjem i uzoraka bez ponavljanja. Uputa: Prvi argument funkcije za uzorak bez ponavljanja pretpostavlja listu (sequence).
+Pretvaranje iz DataFrame u listu je na sljedeći način podaci.values.tolist().
+
+import random
+#bez ponavljanja
+podaci_novo=podaci.values.tolist()
+#print(podaci_novo)
+k=4
+#norep = pd.DataFrame(np.nan, index = ["norep1","norep2"], columns = (0,1,2,3))
+#print(norep)
+
+norep1 = random.sample(podaci_novo, k)
+norep2 = random.sample(podaci_novo, k)
+
+print("norep1 \n",norep1)
+print("norep2 \n", norep2)
+
+#s ponavljanjem
+
+rep1 = random.choices(podaci_novo, k=k)
+rep2 = random.choices(podaci_novo, k=k)
+
+
+print("rep1 \n", rep1)
+print("rep2 \n", rep2)
+
+
+ 
