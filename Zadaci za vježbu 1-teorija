@@ -93,7 +93,7 @@ Ova naredba instalira paket matplotlib te ga importira pod aliasom plt.
 
 #18. Što nastaje naredbama: plt.plot, plt.bar, plt.hist, plt.scatter?
 
-Linijski grafikon, stupčasti grafikon, histogram i dijagram rasipanja. 
+Linijski grafikon, grafikon jednostavnih stupaca, histogram i dijagram rasipanja. 
 
 #19. Definirajte model jednostavne linearne regresije s tri nezavisne varijable. Definirajte funkciju cilja.
 
@@ -122,11 +122,12 @@ optimizacije
 
 #21. Kojim metodama se mogu procijeniti parametri u modelu OLS?
 
-Metodom momenata i maksimizacijom vjerodostojnosti.
+Metodom momenata i maksimizacijom vjerodostojnosti?
 
 #22. Objasni koeficijent determinacije. Što se događa dodavanjem prediktora u model?
 
-Koeficijent determinacije nam pokazuje koliko je posto odstupanja protumačeno modelom. Dodavanjem prediktora u model on se povećava. 
+Koeficijent determinacije nam pokazuje koliko je posto odstupanja protumačeno modelom. Dodavanjem prediktora u model on se povećava, osim ako 
+postoji problem multikolinearnosti on se smanjuje.
 
 #23. Usporedba modela
 
@@ -146,7 +147,7 @@ U statistici, parsimonijski modeli su oni koji su dovoljno jednostavni da objasn
 
 #26. Koji se indikatori kvalitete fita modela računaju pomoću sume kvadrata reziduala?
 
-RMSE i korigirani koeficijent determinacije?
+RMSE 
 
 #27. Koji se indikatori kvalitete fita modela računaju pomoću vjerodostojnosti?
 
@@ -192,10 +193,18 @@ dodavanje
 3. U modelu se zadržava nova
 varijabla koja optimizira kriterij
 
-1. model: samo konstanta
-2. model: x1
-3. model: x1 + x2
-4. model: x1 + x2 + x3 ?
+Za početak kreiramo 3 modela:
+1. model x1
+2. model x2
+3. model x3
+
+od ta 3 gledamo koji je najbolji, npr. najveći R2 ili najmanji AIC
+
+onda uzimamo najbolji, npr. x1 i njemu dodajemo x2 i x3
+1. model x1+x2
+2. model x1+x3
+
+od te dvije kombinacije gledamo koja je najbolja
 
 
 
