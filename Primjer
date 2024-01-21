@@ -56,5 +56,250 @@ rep2 = random.choices(podaci_novo, k=k)
 print("rep1 \n", rep1)
 print("rep2 \n", rep2)
 
+#Zadatak 2. : Učitaj podatke iz csv GTispit.csv. U dokumentu se nalaze tri Google Trends niza koji prikazuju popularnost pojmova: "vikend akcija", "sniženje" i "rasprodaja" te volumen prodaje maloprodaje. Google Trends podaci se interpretiraju kao popularnost pretraživanja pojma, dok retail odražava volumen prodaje u maloprodaji (mjesečna zamjenska varijabla za potrošnju). 
+Svi podaci su izračunani za Hrvatsku za period 01/2020 - 11/2023. DataFrame nazovi potrosnja. Riješi sljedeće zadatke:
+
+potrosnja = pd.read_csv("GTispit.csv", index_col=0, parse_dates=True)
+print(potrosnja)
+
+>>>#Grafički prikaži popularnost pojma "vikend akcija". Objasni dinamiku popularnosti.
+Posebno se osvrni na zadnjih pola godine koji korespondiraju uvođenju "neradnih nedjelja". 
+
+import matplotlib.pyplot as plt
+
+plt.plot(potrosnja["vikend_akcija"])
+
+#2014. se vidi nagli rast popularnosti pojma "vikend-akcija" koja doživljava vrhunac 2017. i zatim sporo pada. U posljednjih pola godine uočava se pad
+popularnosti pojma "vikend-akcija", budući da se smanjio broj trgovina koje su otvorene nedjeljom ovisno o tome koje su izabrane kao neradne, a posljedično tome
+se smanjio i broj vikend-akcija te njihovog pretraživanja.
+
+>>>#Definiraj novi indikator Omjer kao omjer popularnosti pojmova rasprodaja i sniženje. Komentiraj dinamiku Omjera.
+Diskutiraj oblik distribucije, što zaključuješ? 
+
+Omjer=potrošnja["rasprodaja"]/potrošnja["sniženje"]
+print(Omjer)
+#print(np.median(omjer), np.mean(omjer))
+
+descriptives = Omjer.describe()
+print(descriptives)
+
+plt.plot(Omjer)
+plt.hist(Omjer)
+
+#možemo komentirati medijan i prosjek
+#npr. ako je medijan>1 i prosjek>1 znači da je popularniji pojam rasprodaja od pojma sniženje
+#histogram nam pokazuje distribuciju, tj. odgovara na pitanje koliko su česte vrijednosti indikatora
+#s histograma vidimo da je najčešća frekvencija u razredu 1-1,3(prosjek), što znači da je popularnost pojmova jednaka ili je ponekad rasprodaja popularnija
+#pozitivno asimetrična(desnostrana) -> prosjek>medijan, negativno asimetrična(lijevostrana) -> prosjek<medijan
+
+>>>#Izračunaj stopu promjene za GT indikatore po formuli gt=(ln(GTt)-ln(GTt-12))*100 i za retail 
+rt=(ln(retail)-ln(retailt-12))*100.
+
+
+logGT=np.log(potrosnja.iloc[:,0:3])
+gt=logGT.diff(periods=12,axis=0)*100
+print(gt)
 
  
+logRT=np.log(potrosnja["retail"])
+rt=logRT.diff(periods=12,axis=0)*100
+print(rt)
+
+>>>#Procijeni linearni regresijski model rt=ß0 + ß1gt(vikend-akcija) + ß2gt(sniženje) + ß3gt(rasprodaja) +  epsilon te napiši procijenjenu jednadžbu.
+
+import statsmodels.api as sm
+
+X = gt.iloc[12:167, 0:3].values.reshape(-1, 3)  
+Y = rt.iloc[12:167].values.reshape(-1, 1) 
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+>>>#Nastavi forward selekciju uz pretpostavku da je u prvom koraku odabrana gt_vikendakcija. Koji model je optimalan? 
+
+#1. model x1+x2, vikend_akcija i sniženje
+
+import statsmodels.api as sm
+
+X = gt.iloc[12:167, [0,1]].values.reshape(-1, 2)  
+Y = rt.iloc[12:167].values.reshape(-1, 1) 
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+#2. model x1+x3, vikend_akcija i rasprodaja
+
+import statsmodels.api as sm
+
+X = gt.iloc[12:167, [0,2]].values.reshape(-1, 2)  
+Y = rt.iloc[12:167].values.reshape(-1, 1) 
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+#gledamo R2adj ili R2, a možemo i AIC
+
+>>>#Za optimalni model iz (e) izračunaj RMSE na test dijelu podataka koji čini zadnjih 30% podataka. 
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+X = gt.iloc[12:167, [0,2]].values.reshape(-1, 2)  
+Y = rt.iloc[12:167].values.reshape(-1, 1) 
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, shuffle=False)
+
+X = X_train 
+Y= Y_train
+
+linear_regressor = LinearRegression()
+linear_regressor.fit(X, Y)  # perform linear regression
+Y_pred = linear_regressor.predict(X_test)  # make predictions, procijenjeni podaci
+Y_hat = Y_pred.reshape(-1, 1)  
+
+RMSE=np.sqrt(np.mean(((Y_test-Y_hat)**2)))
+
+print(RMSE)
+
+#Zadatak 3: Generiraj DataFrame koji sadrži uzorak iz N(0.7,0.3^2) veličine 100. Parne elemente niza promijeni u 2^x. Postavi seed=2. 
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+np.random.seed(seed=2)
+
+mu = 0.7
+sigma = 0.3
+
+data=pd.DataFrame(np.random.normal(mu,sigma,size=(n,1)),columns=["A"])
+print(data)
+
+
+data_novo = data.copy()
+
+for i in range (0,100, 2):    
+     data_novo.iloc[i,0] = 2**data.iloc[i,0]
+print(data_novo)
+
+>>>#Pretpostavi da je DGP normalna distribucija i procijeni parametre distribucije. Nacrtaj zajedno histogram i procijenjeni DGP, oznaka: pDGP. Što zaključuješ? 
+
+m1=np.mean(data_novo.values)
+s1=np.std(data_novo.values)
+
+print("Teorijski DGP, mu=",mu,"sigma=",sigma)
+print("Full sample DGP, mu=",m1,"sigma=",s1)
+
+plt.hist(data_novo["A"], density=True, alpha=0.5, color='b', edgecolor='black',label="A") #density=true znači da je površina histograma=1
+
+# Overlay the probability density function (PDF) for a normal distribution
+xmin, xmax = plt.xlim()
+x = np.linspace(xmin, xmax, 100) #točke na x osi koje idu od xmin do xmax
+
+pdf0 = (1 / (np.sqrt(2 * np.pi) * sigma)) * np.exp(-(x - mu)**2 / (2 * sigma**2))  #formula za krivulju distribucije, teorijska DGP
+pdf1 = (1 / (np.sqrt(2 * np.pi) * s1)) * np.exp(-(x - m1)**2 / (2 * s1**2))    #full sample
+
+plt.plot(x, pdf0, 'k', linewidth=1,label="DGP")
+plt.plot(x, pdf1, 'k', linewidth=1,ls=":",label="pDGP")
+
+
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+#treba li koristiti data_novo ili data? jer se inače jako razlikuju rezultati zbog ove promjene koju smo napravili
+
+>>>#Procijeni koeficijent varijacije (sigma/mu) pomoću pDGP i pomoću simulacija. Usporedi i objasni rezultate, što zaključuješ iz navedenog? 
+
+#koeficijent varijacija za pDGP
+koef_var_pDGP=m1/s1
+
+#pomoću simulacija
+nrep=100
+k=1000
+
+koef_var_sim = np.full(nrep, np.nan)
+
+for i in range(nrep):            
+    data_norm = np.random.normal(m1, s1, 1000)
+    koef_var_sim[i] = np.mean(data_norm)/np.std(data_norm)
+
+print("Teorijski pDGP:", koef_var_pDGP)
+print("Eksperimentalni - simulacije:", np.mean(koef_var_sim))
+
+>>>#Pomoću bootstrapped uzoraka procijeni koeficijent varijacije. Generiraj 1000 uzoraka tako da su prvi put veličine 8 a zatim veličine 50. 
+Usporedi procjene s prethodnim rezultatima. Što zaključuješ? 
+
+#k=8
+import random
+
+nrep=1000
+k=8
+
+mu_boot= np.full(nrep, np.nan)
+sigma_boot = np.full(nrep, np.nan)
+koef_var_boot = np.full(nrep, np.nan)
+
+
+for i in range(nrep):            
+    sample=random.choices(data_novo["A"].values, k=k)
+    mu_boot[i] = np.mean(sample)
+    sigma_boot[i] = np.std(data_norm)
+    koef_var_boot[i]=mu_boot[i]/ sigma_boot[i]
+
+print("Teorijski pDGP:", koef_var_pDGP)
+print("Eksperimentalni - simulacije:", np.mean(koef_var_sim))
+print("Bootstrap (prosjek):", np.mean(koef_var_boot))
+
+
+#k=50
+import random
+
+nrep=1000
+k=50
+
+mu_boot= np.full(nrep, np.nan)
+sigma_boot = np.full(nrep, np.nan)
+koef_var_boot = np.full(nrep, np.nan)
+
+
+for i in range(nrep):            
+    sample=random.choices(data_novo["A"].values, k=k)
+    mu_boot[i] = np.mean(sample)
+    sigma_boot[i] = np.std(data_norm)
+    koef_var_boot[i]=mu_boot[i]/ sigma_boot[i]
+
+print("Teorijski pDGP:", koef_var_pDGP)
+print("Eksperimentalni - simulacije:", np.mean(koef_var_sim))
+print("Bootstrap (prosjek):", np.mean(koef_var_boot))
+
+>>>#Izračunaj pristranost za jackknife procjenu za koeficijent varijacije. 
+
+n=100
+
+mu_jack= np.full(nrep, np.nan)
+sigma_jack = np.full(nrep, np.nan)
+koef_var_jack = np.full(n, np.nan)
+
+for i in range(n):
+    jack_data = np.concatenate([data_novo.iloc[0:i,0].values, data_novo.iloc[i+1:,0].values])
+    mu_jack[i] = np.mean(sample)
+    sigma_jack[i] = np.std(data_norm)
+    koef_var_jack[i]=mu_jack[i]/ sigma_jack[i]
+
+print("koeficijent varijacije",mu/sigma)
+print("Jackknife izračun", np.mean(koef_var_jack))
+print("Jackknife pristranost", (n-1)*(np.mean(koef_var_jack)-(mu/sigma)))
+
+
+
+
+
+
