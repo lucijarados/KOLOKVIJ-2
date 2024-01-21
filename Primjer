@@ -219,7 +219,7 @@ plt.close()
 >>>#Procijeni koeficijent varijacije (sigma/mu) pomoću pDGP i pomoću simulacija. Usporedi i objasni rezultate, što zaključuješ iz navedenog? 
 
 #koeficijent varijacija za pDGP
-koef_var_pDGP=m1/s1
+koef_var_pDGP=s1/m1
 
 #pomoću simulacija
 nrep=100
@@ -229,7 +229,7 @@ koef_var_sim = np.full(nrep, np.nan)
 
 for i in range(nrep):            
     data_norm = np.random.normal(m1, s1, 1000)
-    koef_var_sim[i] = np.mean(data_norm)/np.std(data_norm)
+    koef_var_sim[i] = np.std(data_norm)/np.mean(data_norm)
 
 print("Teorijski pDGP:", koef_var_pDGP)
 print("Eksperimentalni - simulacije:", np.mean(koef_var_sim))
@@ -251,8 +251,8 @@ koef_var_boot = np.full(nrep, np.nan)
 for i in range(nrep):            
     sample=random.choices(data_novo["A"].values, k=k)
     mu_boot[i] = np.mean(sample)
-    sigma_boot[i] = np.std(data_norm)
-    koef_var_boot[i]=mu_boot[i]/ sigma_boot[i]
+    sigma_boot[i] = np.std(sampl)
+    koef_var_boot[i]=sigma_boot[i]/ mu_boot[i]
 
 print("Teorijski pDGP:", koef_var_pDGP)
 print("Eksperimentalni - simulacije:", np.mean(koef_var_sim))
@@ -273,8 +273,8 @@ koef_var_boot = np.full(nrep, np.nan)
 for i in range(nrep):            
     sample=random.choices(data_novo["A"].values, k=k)
     mu_boot[i] = np.mean(sample)
-    sigma_boot[i] = np.std(data_norm)
-    koef_var_boot[i]=mu_boot[i]/ sigma_boot[i]
+    sigma_boot[i] = np.std(sample)
+    koef_var_boot[i]=sigma_boot[i]/ mu_boot[i]
 
 print("Teorijski pDGP:", koef_var_pDGP)
 print("Eksperimentalni - simulacije:", np.mean(koef_var_sim))
@@ -290,13 +290,13 @@ koef_var_jack = np.full(n, np.nan)
 
 for i in range(n):
     jack_data = np.concatenate([data_novo.iloc[0:i,0].values, data_novo.iloc[i+1:,0].values])
-    mu_jack[i] = np.mean(sample)
-    sigma_jack[i] = np.std(data_norm)
-    koef_var_jack[i]=mu_jack[i]/ sigma_jack[i]
+    mu_jack[i] = np.mean(jack_data)
+    sigma_jack[i] = np.std(jack_data)
+    koef_var_jack[i]=sigma_jack[i]/ mu_jack[i]
 
-print("koeficijent varijacije",mu/sigma)
+print("koeficijent varijacije",sigma/mu)
 print("Jackknife izračun", np.mean(koef_var_jack))
-print("Jackknife pristranost", (n-1)*(np.mean(koef_var_jack)-(mu/sigma)))
+print("Jackknife pristranost", (n-1)*(np.mean(koef_var_jack)-(sigma/mu)))
 
 
 
