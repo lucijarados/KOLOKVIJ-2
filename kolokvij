@@ -1,0 +1,220 @@
+#1. 
+import numpy as np
+import pandas as pd
+np.random.seed(seed=17)
+
+A=np.random.normal(15,5,(6,4))
+print(A)
+
+print(A[0,:]-A[1,:])
+
+c=A[:,0]
+#print(c)
+
+prosjek_c=np.mean(c)
+#print(prosjek_c)
+
+for i in c:
+    if (i > prosjek_c):
+        print(i)
+
+ppl=pd.DataFrame(A[:,1],columns=["A"])
+print(ppl)
+
+import random
+#k=4
+nrep=100
+k=4
+
+sample=random.choices(ppl["A"].values, k=k)
+prosjek1=np.mean(sample)
+print("prosjek1=",prosjek1)
+
+import random
+#k=17
+nrep=100
+k=17
+
+sample=random.choices(ppl["A"].values, k=k)
+prosjek2=np.mean(sample)
+print("prosjek2=", prosjek2)
+
+import random
+#k=72
+nrep=100
+k=72
+
+sample=random.choices(ppl["A"].values, k=k)
+prosjek3=np.mean(sample)
+print("prosjek3=", prosjek3)
+
+#2. 
+import numpy as np
+import pandas as pd
+
+infl = pd.read_csv("Kolokvij.csv", index_col=0, parse_dates=True)
+print(infl)
+
+import matplotlib.pyplot as plt
+plt.hist(infl["inflation"],bins=5,range=[0,100])
+
+plt.show()
+plt.close()
+
+import matplotlib.pyplot as plt
+plt.hist(infl.iloc[49:96,4],bins=5,range=[0,100])
+
+plt.show()
+plt.close()
+
+import statsmodels.api as sm
+
+X = infl.iloc[:, 0:4].values.reshape(-1, 4)  
+Y = infl.iloc[:, 4].values.reshape(-1, 1) 
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+#1. model, x1+x2+x4, tj. real_estate, business_industrial i shopping 
+
+import statsmodels.api as sm
+
+X = infl.iloc[:, [0,1,3]].values.reshape(-1, 3)  
+Y = infl.iloc[:, 4].values.reshape(-1, 1) 
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+#2. model, x1+x3+x4, tj. real_estate, finance i shopping 
+
+import statsmodels.api as sm
+
+X = infl.iloc[:, [0,2,3]].values.reshape(-1, 3)  
+Y = infl.iloc[:, 4].values.reshape(-1, 1) 
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+#3. model, x2+x3+x4, tj. business_industrial, finance i shopping 
+
+import statsmodels.api as sm
+
+X = infl.iloc[:, [1,2,3]].values.reshape(-1, 3)  
+Y = infl.iloc[:, 4].values.reshape(-1, 1) 
+
+X0=sm.add_constant(X)
+reg_a=sm.OLS(Y,X0).fit()
+
+reg_a.summary()
+
+from sklearn.linear_model import LinearRegression 
+from sklearn.model_selection import train_test_split
+
+X = infl.iloc[:, [0,2,3]].values.reshape(-1, 3)  
+Y = infl.iloc[:, 4].values.reshape(-1, 1) 
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, shuffle=False)
+
+Xtmp = X_train[:,0].reshape(-1, 1) 
+
+X0=sm.add_constant(Xtmp)
+reg_a=sm.OLS(Y_train,X0).fit()
+
+X0_test=sm.add_constant(X_test[:,0].reshape(-1, 1))
+y_pred1=reg_a.predict(X0_test)
+
+MAE=np.mean(np.abs(y_pred1-Y_test))
+print(MAE)
+
+#3.
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+mu=5.5
+sigma=0.5
+
+n=100
+
+np.random.seed(seed=12)
+data=pd.DataFrame(np.random.normal(mu,sigma,size=(n,1)),columns=["A"])
+
+print(data)
+
+plt.hist(data["A"],label=data.columns)
+
+plt.show()
+plt.close()
+
+m1=np.mean(data.values)
+s1=np.std(data.values)
+
+print("Teorijski DGP, mu=",mu,"sigma=",sigma)
+print("Procijenjeni DGP, mu=",m1,"sigma=",s1)
+
+plt.hist(data["A"], density=True, alpha=0.5, color='b', edgecolor='black',label="A")
+
+# Overlay the probability density function (PDF) for a normal distribution
+xmin, xmax = plt.xlim()
+x = np.linspace(xmin, xmax, 100)
+
+pdf0 = (1 / (np.sqrt(2 * np.pi) * sigma)) * np.exp(-(x - mu)**2 / (2 * sigma**2))
+pdf1 = (1 / (np.sqrt(2 * np.pi) * s1)) * np.exp(-(x - m1)**2 / (2 * s1**2))
+
+
+plt.plot(x, pdf0, 'k', linewidth=1,label="DGP")
+plt.plot(x, pdf1, 'k', linewidth=1,ls=":",label="pDGP")
+
+
+plt.legend(loc='upper left', fontsize='small')
+
+plt.show()
+plt.close()
+
+#Medijan kod normalne distribucije jednak je prosjeku jer pretpostavljamo da je DGP iz normalne distribucije
+Me_DGP=mu
+omjer_pDGP=(mu/mu)*100
+
+#pomoću simulacija
+nrep=100
+
+Me_sim = np.full(nrep, np.nan)
+prosjek_sim=np.full(nrep, np.nan)
+omjer_sim=np.full(nrep, np.nan)
+
+for i in range(nrep):            
+    data_norm = np.random.normal(m1, s1, 1000)
+    Me_sim[i] = np.percentile(data_norm,50)
+    prosjek_sim[i]=np.mean(data_norm)
+    omjer_sim[i]=(Me_sim[i]/prosjek_sim[i])*100
+
+print("Teorijski pDGP omjer:",omjer_pDGP )
+print("Eksperimentalni - simulacije:", np.mean(omjer_sim))
+
+import random
+
+nrep=1000
+k=15
+
+Me_boot = np.full(nrep, np.nan)
+prosjek_boot=np.full(nrep, np.nan)
+omjer_boot=np.full(nrep, np.nan)
+
+
+for i in range(nrep):            
+    sample=random.choices(data["A"].values, k=k)
+    Me_boot[i] = np.percentile(sample, 50)
+    prosjek_boot[i]=np.mean(sample)
+    omjer_boot[i]=(Me_boot[i]/prosjek_boot[i])*100
+
+print("Teorijski pDGP omjer:",omjer_pDGP )
+print("Eksperimentalni - simulacije:", np.mean(omjer_sim))
+print("Bootstrap (prosjek):", np.mean(omjer_boot))
+
+
