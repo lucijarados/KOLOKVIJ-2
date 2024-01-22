@@ -175,6 +175,7 @@ import matplotlib.pyplot as plt
 
 np.random.seed(seed=2)
 
+n=100
 mu = 0.7
 sigma = 0.3
 
@@ -194,7 +195,7 @@ m1=np.mean(data_novo.values)
 s1=np.std(data_novo.values)
 
 print("Teorijski DGP, mu=",mu,"sigma=",sigma)
-print("Full sample DGP, mu=",m1,"sigma=",s1)
+print("Full sample DGP, mu1=",m1,"sigma1=",s1)
 
 plt.hist(data_novo["A"], density=True, alpha=0.5, color='b', edgecolor='black',label="A") #density=true znači da je površina histograma=1
 
@@ -251,7 +252,7 @@ koef_var_boot = np.full(nrep, np.nan)
 for i in range(nrep):            
     sample=random.choices(data_novo["A"].values, k=k)
     mu_boot[i] = np.mean(sample)
-    sigma_boot[i] = np.std(sampl)
+    sigma_boot[i] = np.std(sample)
     koef_var_boot[i]=sigma_boot[i]/ mu_boot[i]
 
 print("Teorijski pDGP:", koef_var_pDGP)
